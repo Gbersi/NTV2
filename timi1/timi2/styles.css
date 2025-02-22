@@ -1,0 +1,42 @@
+h1 {
+  color: brown;
+
+}
+.contact_info {
+  color: blue;
+
+}
+
+.secondary_headers {
+  color: orange;
+}
+
+.skills {
+ border: 1px ridge black;
+}
+
+input:hover {
+  background-color: red;
+}
+
+img[alt] {
+  border: 5px solid black;
+  height: 100px;
+  width: 100px;
+  
+}
+
+.border_box {
+  height:100px;
+  width: 100px;
+  padding :10px;
+  background-color: red;
+  margin: 100px;
+  border: 1px solid black;
+}
+
+.center-image {
+  display: block;
+ margin : 0 auto
+  
+}

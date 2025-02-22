@@ -1,0 +1,93 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #e4f0f5; 
+  margin: 0;
+  padding: 20px;
+}
+
+.cv-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff; 
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius:4px;
+  overflow: hidden;
+}
+
+.cv-header {
+  background-color: #1da826e0; 
+  text-align: center;
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px;
+}
+
+
+.profile-picture {
+  display: block;
+  margin: 0 auto 10px auto;
+  border: 5px solid #fffefe; 
+  width: 100px;
+  height: 100px;
+  object-fit: cover; 
+  border-radius: 50%;
+}
+
+
+.cv-section {
+  margin: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cv-section h2 {
+  color: #fff;
+  padding: 10px 15px;
+  margin: 0;
+}
+
+
+.contact-section h2 {
+  background-color: #0e6145; 
+}
+
+.skills-section h2 {
+  background-color: #0e6145; 
+}
+
+.work-section h2 {
+  background-color: #0e6145; 
+}
+
+.education-section h2 {
+  background-color: #0e6145; 
+}
+
+.cv-section-content {
+  padding: 15px;
+  background-color: #f9f9f9;
+  color: #333;
+}
+.section-content {
+  background-color: #fff;
+  padding: 15px;
+  color: #333;
+}
+
+.cv-footer {
+  background-color: #1da826e1; 
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+  border-radius: 10px;
+  margin: 10px;
+}
