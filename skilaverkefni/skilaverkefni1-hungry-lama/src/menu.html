@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Menu - The Hungry Llama</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes hoverEffect {
+      0% { transform: scale(1); filter: brightness(1); }
+      50% { transform: scale(1.05); filter: brightness(1.2); }
+      100% { transform: scale(1); filter: brightness(1); }
+    }
+    .fade-in { opacity: 0; animation: fadeInUp 1s ease-out forwards; }
+    .hover-zoom { transition: transform 0.4s ease-in-out; }
+    .hover-zoom:hover { transform: scale(1.1); }
+    .hover-effect:hover img { animation: hoverEffect 0.5s ease-in-out; }
+    .button-hover { transition: background 0.3s ease-in-out, transform 0.3s ease-in-out; }
+    .button-hover:hover { background-color: #6F4A3D; transform: scale(1.05); }
+  </style>
+  <script>
+    function openModal(name, image, ingredients, price) {
+      document.getElementById("modal-image").src = image;
+      document.getElementById("modal-name").textContent = name;
+      document.getElementById("modal-ingredients").textContent = ingredients;
+      document.getElementById("modal-price").textContent = `Price: ${price}`;
+      document.getElementById("modal").classList.remove("hidden");
+    }
+    function closeModal() {
+      document.getElementById("modal").classList.add("hidden");
+    }
+  </script>
+</head>
+<body class="font-[Poppins] text-[#5A3E36] bg-[#FBF9F3]">
+  
+
+  <header class="fixed top-0 left-0 w-full z-50 bg-[#8E6B59] transition-all duration-300">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between p-4 transition-all duration-300">
+  
+      <a href="index.html">
+        <img src="./images/hungry-llama.png" alt="The Hungry Llama Logo" class="h-14 transition-all duration-300">
+      </a>
+  
+ 
+      <ul class="hidden md:flex space-x-6 text-[#FBF9F3] font-semibold uppercase">
+        <li><a href="index.html" class="relative text-[#C9A886] hover:text-[#fee878] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Home</a></li>
+        <li><a href="menu.html" class="relative text-[#C9A886] hover:text-[#0ad5e8] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Menu</a></li>
+        <li><a href="about.html" class="relative text-[#C9A886] hover:text-[#c15c60] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">About Us</a></li>
+        <li><a href="contact.html" class="relative text-[#C9A886] hover:text-[#9a825c] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Contact</a></li>
+      </ul>
+  
+     
+      <button id="menu-btn" class="md:hidden text-[#f94002] text-2xl focus:outline-none">
+        &#9776;
+      </button>
+    </nav>
+  
+ 
+    <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-[#8E6B59] shadow-md transition-all duration-300">
+      <ul class="text-center py-4 space-y-4">
+        <li><a href="index.html" class="block text-[#C9A886] text-lg hover:text-[#fee878]">Home</a></li>
+        <li><a href="menu.html" class="block text-[#C9A886] text-lg hover:text-[#0ad5e8]">Menu</a></li>
+        <li><a href="about.html" class="block text-[#C9A886] text-lg hover:text-[#c15c60]">About Us</a></li>
+        <li><a href="contact.html" class="block text-[#C9A886] text-lg hover:text-[#9a825c]">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+  
+
+  <section class="relative h-[50vh] flex items-center justify-center text-center text-white bg-cover bg-center" style="background-image: url('./images/hungryllama.jpg');">
+    <div class="fade-in max-w-3xl">
+      <h1 class="text-5xl font-bold tracking-wide">Our Exquisite Menu</h1>
+      <p class="text-lg mt-3">Indulge in a fine selection of handcrafted dishes made from the freshest ingredients.</p>
+    </div>
+  </section>
+  
+  
+  <main class="max-w-6xl mx-auto px-6 py-16">
+    <script>
+      const menuItems = [
+        { category: "Starters", items: [
+          { name: "Chicken Caesar Salad", image: "./images/salad1.png", ingredients: "Romaine Lettuce, Grilled Chicken, Parmesan Cheese, Caesar Dressing", price: "$12.99" },
+          { name: "Classic Cobb Salad", image: "./images/salad2.png", ingredients: "Grilled Chicken, Avocado, Bacon, Hard-Boiled Eggs, Tomatoes, Blue Cheese Dressing", price: "$13.99" },
+          { name: "Asian Chicken Salad", image: "./images/salad3.png", ingredients: "Shredded Chicken, Mandarin Oranges, Crispy Wontons, Sesame Ginger Dressing", price: "$11.99" }
+        ]},
+        { category: "Main Course", items: [
+          { name: "Southwest Chicken Salad", image: "./images/salad5.png", ingredients: "Grilled Chicken, Corn, Black Beans, Avocado, Tomatoes, Chipotle Ranch Dressing", price: "$14.99" },
+          { name: "Grilled Chicken Salad", image: "./images/salad6.png", ingredients: "Grilled Chicken, Cherry Tomatoes, Red Onion, Balsamic Vinaigrette", price: "$12.99" },
+          { name: "Greek Chicken Salad", image: "./images/salad7.png", ingredients: "Grilled Chicken, Feta Cheese, Cucumbers, Kalamata Olives, Lemon-Olive Oil Dressing", price: "$13.99" },
+          { name: "Buffalo Chicken Salad", image: "./images/salad8.png", ingredients: "Crispy Chicken Tenders, Mixed Greens, Carrots, Celery, Blue Cheese Crumbles, Buffalo Ranch Dressing", price: "$14.99" }
+          ]},
+          { category: "Sandwiches", items: [
+          { name: "Grilled Chicken Panini", image: "./images/sandwich1.png", ingredients: "Mozzarella Cheese, Roasted Red Peppers, Pesto Mayo", price: "$18.99"},
+          { name: "Chicken Salad Sandwich", image: "./images/sandwich2.png", ingredients: "Shredded Chicken, Grapes, Almonds, Lettuce on Whole Wheat Bread", price: "$19.99" },
+          { name: "Buffalo Chicken Wrap", image: "./images/wrap1.png", ingredients: "Crispy Chicken Tenders, Mixed Greens, Blue Cheese Crumbles, Buffalo Ranch Dressing in a Flour Tortilla", price: "$19.99" }
+        ]},
+        { category: "Sides", items: [
+          { name: "Sweet Potato Fries", image: "./images/Crispy-Sweet-Potato.jpg", ingredients: "Crispy sweet potato fries with sea salt", price: "$10.99" },
+          { name: "Garlic Parmesan Fries", image: "./images/garlicfries.jpg", ingredients: "Crispy fries with garlic butter and parmesan cheese", price: "$10.99" },
+          { name: "Grilled Vegetables", image: "./images/Grilled-Vegetables.jpg", ingredients: "Fresh seasonal vegetables grilled to perfection", price: "$10.99" }
+        ]},
+      ];
+      menuItems.forEach(category => {
+        document.write(`<h2 class='text-3xl font-bold text-[#8E6B59] mt-12'>${category.category}</h2>`);
+        document.write(`<div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 my-6'>`);
+        category.items.forEach(item => {
+          document.write(`
+            <div class='bg-white shadow-lg rounded-lg p-4 flex flex-col items-center cursor-pointer hover-zoom hover-effect' onclick="openModal('${item.name}', '${item.image}', '${item.ingredients}', '${item.price}')">
+              <img src='${item.image}' alt='${item.name}' class='w-full h-40 object-cover rounded-lg'>
+              <h3 class='text-lg font-semibold mt-2'>${item.name}</h3>
+              <p class='text-sm text-gray-600 mt-1'>${item.ingredients}</p>
+              <p class='text-lg font-semibold text-[#8E6B59] mt-2'>${item.price}</p>
+            </div>
+          `);
+        });
+        document.write(`</div>`);
+      });
+    </script>
+  </main>
+  
+
+  <footer class="mt-8 p-4 text-center text-[#FBF9F3] bg-[#8E6B59] border-t-2 border-[#D6B48E]">
+    <p>1404 Food Road | Phone: 555-3212 | Open: 11:00 AM - 10:00 PM</p>
+  </footer>
+</body>
+</html>

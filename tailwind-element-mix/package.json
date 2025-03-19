@@ -5,5 +5,8 @@
   },
   "scripts": {
     "tailwind-watch": "npx @tailwindcss/cli -i ./src/input.css -o ./src/output.css --watch"
+  },
+  "devDependencies": {
+    "parcel": "^2.13.3"
   }
 }

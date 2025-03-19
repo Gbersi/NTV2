@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Button Project</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="container">
+    <h1>The Button Project</h1>
+    <div id="counterDisplay">0</div>
+    <div id="boomMessage"></div>
+    <div class="button-container">
+      <button id="increment" class="btn increment-btn">+</button>
+      <button id="decrement" class="btn decrement-btn">−</button>
+    </div>
+  
+    <hr>
+  
+    <h2>Settings</h2>
+    <div class="settings">
+      <div class="settings-group">
+        <label for="stepInput">Step:</label>
+        <input type="number" id="stepInput" value="5">
+      </div>
+      <div class="settings-group">
+        <label for="limitInput">Limit:</label>
+        <input type="number" id="limitInput" value="35">
+      </div>
+      <button id="saveSettings" class="btn save-btn">Save Settings</button>
+    </div>
+  </div>
+  <script>
+
+    let step = Number(localStorage.getItem("step")) || 5;
+    let limit = Number(localStorage.getItem("limit")) || 35;
+    let counter = 0;
+
+  
+    document.getElementById("stepInput").value = step;
+    document.getElementById("limitInput").value = limit;
+
+  
+    function updateDisplay() {
+      const counterDisplay = document.getElementById("counterDisplay");
+      const boomMessage = document.getElementById("boomMessage");
+      if (Math.abs(counter) > limit) {
+        boomMessage.textContent = "BOOM";
+        counterDisplay.textContent = "";
+      } else {
+        boomMessage.textContent = "";
+        counterDisplay.textContent = counter;
+      }
+    }
+
+    
+    document.getElementById("increment").addEventListener("click", function() {
+      counter += step;
+      updateDisplay();
+    });
+
+    
+    document.getElementById("decrement").addEventListener("click", function() {
+      counter -= step;
+      updateDisplay();
+    });
+
+    
+    document.getElementById("saveSettings").addEventListener("click", function() {
+      
+      step = Number(document.getElementById("stepInput").value) || 5;
+      limit = Number(document.getElementById("limitInput").value) || 35;
+      
+      localStorage.setItem("step", step);
+      localStorage.setItem("limit", limit);
+      
+      updateDisplay();
+    });
+
+    updateDisplay();
+  </script>
+</body>
+</html>

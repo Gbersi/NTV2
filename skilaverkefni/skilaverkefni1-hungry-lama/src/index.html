@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Hungry Llama</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bgMove {
+      0% { background-position: center top; }
+      50% { background-position: center bottom; }
+      100% { background-position: center top; }
+    }
+    @keyframes zoomIn {
+      from { transform: scale(1); }
+      to { transform: scale(1.1); }
+    }
+    .fade-in { opacity: 0; animation: fadeInUp 1s ease-out forwards; }
+    .bg-animate { animation: bgMove 10s infinite alternate linear; }
+    .hover-zoom { transition: transform 0.4s ease-in-out; }
+    .hover-zoom:hover { transform: scale(1.1); }
+    .hover-click:active { animation: zoomIn 0.2s ease-in-out; }
+    .button-hover { transition: background 0.3s ease-in-out, transform 0.3s ease-in-out; }
+    .button-hover:hover { background-color: #6F4A3D; transform: scale(1.05); }
+  </style>
+</head>
+<body class="font-[Poppins] text-[#5A3E36] bg-[#FBF9F3]">
+  
+
+  <header class="fixed top-0 left-0 w-full z-50 bg-[#8E6B59] transition-all duration-300">
+    <nav class="max-w-6xl mx-auto flex items-center justify-between p-4 transition-all duration-300">
+    
+      <a href="index.html">
+        <img src="./images/hungry-llama.png" alt="The Hungry Llama Logo" class="h-14 transition-all duration-300">
+      </a>
+  
+    
+      <ul class="hidden md:flex space-x-6 text-[#FBF9F3] font-semibold uppercase">
+        <li><a href="index.html" class="relative text-[#C9A886] hover:text-[#fee878] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Home</a></li>
+        <li><a href="menu.html" class="relative text-[#C9A886] hover:text-[#0ad5e8] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Menu</a></li>
+        <li><a href="about.html" class="relative text-[#C9A886] hover:text-[#c15c60] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">About Us</a></li>
+        <li><a href="contact.html" class="relative text-[#C9A886] hover:text-[#9a825c] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Contact</a></li>
+      </ul>
+  
+   
+      <button id="menu-btn" class="md:hidden text-[#f94002] text-2xl focus:outline-none">
+        &#9776;
+      </button>
+    </nav>
+  
+
+    <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-[#8E6B59] shadow-md transition-all duration-300">
+      <ul class="text-center py-4 space-y-4">
+        <li><a href="index.html" class="block text-[#C9A886] text-lg hover:text-[#fee878]">Home</a></li>
+        <li><a href="menu.html" class="block text-[#C9A886] text-lg hover:text-[#0ad5e8]">Menu</a></li>
+        <li><a href="about.html" class="block text-[#C9A886] text-lg hover:text-[#c15c60]">About Us</a></li>
+        <li><a href="contact.html" class="block text-[#C9A886] text-lg hover:text-[#9a825c]">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+  
+  
+  <section class="relative h-screen flex items-center justify-center text-center text-white bg-cover bg-center bg-animate" style="background-image: url('./images/hungryllama.jpg');">
+    <div class="fade-in max-w-3xl">
+      <h1 class="text-6xl font-bold tracking-wide">The Hungry Llama</h1>
+      <p class="text-lg mt-3">Where gourmet meets tradition. Experience fresh, locally-sourced culinary delights.</p>
+      <a href="menu.html" class="mt-6 inline-block px-6 py-3 rounded bg-[#8E6B59] text-[#FBF9F3] font-semibold button-hover">View Menu</a>
+    </div>
+  </section>
+ 
+  <section class="max-w-6xl mx-auto px-6 py-16 text-center fade-in">
+    <h2 class="text-4xl font-bold text-[#6F4A3D]">About Us</h2>
+    <p class="text-gray-700 mt-4">At The Hungry Llama, we pride ourselves on using only the finest ingredients to craft delicious meals. Join us for an unforgettable dining experience.</p>
+    <a href="about.html" class="mt-6 inline-block px-6 py-3 rounded bg-[#8E6B59] text-[#FBF9F3] font-semibold button-hover">Learn More</a>
+  </section>
+  
+  
+  <section class="bg-[#FDF6EC] py-16 fade-in">
+    <div class="max-w-6xl mx-auto text-center">
+      <h2 class="text-4xl font-bold text-[#6F4A3D]">Signature Dishes</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mt-8">
+        <div class="bg-white shadow-lg rounded-lg p-4 hover-zoom hover-click">
+          <img src="./images/salad1.png" alt="Chicken Caesar Salad" class="w-full h-64 object-cover rounded-md">
+          <h3 class="text-2xl font-semibold mt-4">Chicken Caesar Salad</h3>
+          <p class="text-gray-600">Romaine, Grilled Chicken, Parmesan, Caesar Dressing</p>
+        </div>
+        <div class="bg-white shadow-lg rounded-lg p-4 hover-zoom hover-click">
+          <img src="./images/salad3.png" alt="Classic Cobb Salad" class="w-full h-64 object-cover rounded-md">
+          <h3 class="text-2xl font-semibold mt-4">Classic Cobb Salad</h3>
+          <p class="text-gray-600">Grilled Chicken, Avocado, Bacon, Eggs, Blue Cheese</p>
+        </div>
+        <div class="bg-white shadow-lg rounded-lg p-4 hover-zoom hover-click">
+          <img src="./images/salad5.png" alt="Southwest Chicken Salad" class="w-full h-64 object-cover rounded-md">
+          <h3 class="text-2xl font-semibold mt-4">Southwest Chicken Salad</h3>
+          <p class="text-gray-600">Grilled Chicken, Corn, Black Beans, Avocado, Chipotle Dressing</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+  <section class="text-center py-16 fade-in">
+    <h2 class="text-4xl font-bold text-[#6F4A3D]">Reserve Your Table</h2>
+    <p class="text-gray-700 mt-4">Experience fine dining at The Hungry Llama. Book a table today!</p>
+    <a href="contact.html" class="mt-6 inline-block px-6 py-3 rounded bg-[#8E6B59] text-[#FBF9F3] font-semibold button-hover">Contact Us</a>
+  </section>
+  
+
+  <footer class="mt-8 p-4 text-center text-[#FBF9F3] bg-[#8E6B59] border-t-2 border-[#D6B48E]">
+    <p>1404 Food Road | Phone: 555-3212 | Open: 11:00 AM - 10:00 PM</p>
+  </footer>
+</body>
+</html>

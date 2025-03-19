@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us - The Hungry Llama</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+   
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="font-[Poppins] text-[#333] bg-[#FBF9F3]">
+  
+ 
+ <header class="fixed top-0 left-0 w-full z-50 bg-[#8E6B59] transition-all duration-300">
+  <nav class="max-w-6xl mx-auto flex items-center justify-between p-4 transition-all duration-300">
+
+    <a href="index.html">
+      <img src="./images/hungry-llama.png" alt="The Hungry Llama Logo" class="h-14 transition-all duration-300">
+    </a>
+
+    
+    <ul class="hidden md:flex space-x-6 text-[#FBF9F3] font-semibold uppercase">
+      <li><a href="index.html" class="relative text-[#C9A886] hover:text-[#fee878] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Home</a></li>
+      <li><a href="menu.html" class="relative text-[#C9A886] hover:text-[#0ad5e8] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Menu</a></li>
+      <li><a href="about.html" class="relative text-[#C9A886] hover:text-[#c15c60] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">About Us</a></li>
+      <li><a href="contact.html" class="relative text-[#C9A886] hover:text-[#9a825c] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Contact</a></li>
+    </ul>
+
+   
+    <button id="menu-btn" class="md:hidden text-[#f94002] text-2xl focus:outline-none">
+      &#9776;
+    </button>
+  </nav>
+
+  
+  <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-[#8E6B59] shadow-md transition-all duration-300">
+    <ul class="text-center py-4 space-y-4">
+      <li><a href="index.html" class="block text-[#C9A886] text-lg hover:text-[#fee878]">Home</a></li>
+      <li><a href="menu.html" class="block text-[#C9A886] text-lg hover:text-[#0ad5e8]">Menu</a></li>
+      <li><a href="about.html" class="block text-[#C9A886] text-lg hover:text-[#c15c60]">About Us</a></li>
+      <li><a href="contact.html" class="block text-[#C9A886] text-lg hover:text-[#9a825c]">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+ 
+  <section class="relative text-center text-white py-6 bg-[#8E6B59] mt-20">
+    <h1 class="text-5xl font-bold fade-in">About The Hungry Llama</h1>
+    <p class="text-lg mt-4 fade-in">Crafting fresh, locally-sourced dishes with a passion for flavor.</p>
+  </section>
+
+
+  <main class="max-w-6xl mx-auto px-6 py-16">
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+     
+      <img src="./images/hungryllama.jpg" alt="Restaurant Interior" class="w-full h-80 object-cover rounded-md shadow-md fade-in">
+      
+      <div class="fade-in">
+        <h2 class="text-3xl font-bold text-[#6F4A3D]">Our Story</h2>
+        <p class="text-gray-700 mt-3">
+          Welcome to The Hungry Llama, a family-owned restaurant that offers a unique and
+          unforgettable dining experience. Our restaurant is inspired by the bold flavors and
+          warm hospitality of South America, and we pride ourselves on serving fresh and
+          locally sourced ingredients. At The Hungry Llama, we believe that food is not just a
+          necessity, but an adventure, and we aim to take our customers on a culinary journey
+          through our carefully crafted menu.
+        </p>
+        <p class="text-gray-700 mt-2">
+          Whether you're in the mood for a hearty meal or
+          a light bite, our diverse menu has something for everyone. We also offer a wide
+          selection of refreshing beverages and cocktails to complement your meal. Come join
+          us at The Hungry Llama, where good food meets great company.
+        </p>
+      </div>
+    </div>
+
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center mt-16">
+      
+      <div class="fade-in">
+        <h2 class="text-3xl font-bold text-[#6F4A3D]">What Makes Us Special?</h2>
+        <ul class="list-disc pl-5 text-gray-700 mt-3 space-y-2">
+          <li><strong>Fresh Ingredients:</strong> We source locally to ensure quality and sustainability.</li>
+          <li><strong>Handcrafted Recipes:</strong> Each dish is thoughtfully prepared with a focus on taste.</li>
+          <li><strong>Community-Oriented:</strong> We love being part of our neighborhood and supporting local farmers.</li>
+        </ul>
+      </div>
+    
+      <img src="./images/farmfresh.jpg" alt="Farm Fresh Ingredients" class="w-full h-80 object-cover rounded-md shadow-md fade-in">
+    </div>
+
+    
+    <div class="text-center mt-12 fade-in">
+      <h3 class="text-2xl font-semibold text-[#6F4A3D]">Come Visit Us!</h3>
+      <p class="text-gray-700 mt-2">Join us for a meal and experience the passion behind our food.</p>
+      <a href="menu.html" class="mt-4 inline-block px-6 py-3 rounded bg-[#8E6B59] text-[#FBF9F3] font-semibold hover:bg-[#738D8F] hover:scale-105 transition-transform">
+        View Our Menu
+      </a>
+    </div>
+  </main>
+
+ 
+  <footer class="mt-8 p-4 text-center text-[#FBF9F3] bg-[#8E6B59]">
+    <p>1404 Food Road | Phone: 555-3212 | Open: 11:00 AM - 10:00 PM</p>
+  </footer>
+
+</body>
+</html>

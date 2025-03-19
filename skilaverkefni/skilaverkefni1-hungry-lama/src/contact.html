@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us - The Hungry Llama</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+  
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body class="font-[Poppins] text-[#333] bg-[#FBF9F3]">
+  
+
+<header class="fixed top-0 left-0 w-full z-50 bg-[#8E6B59] transition-all duration-300">
+  <nav class="max-w-6xl mx-auto flex items-center justify-between p-4 transition-all duration-300">
+   
+    <a href="index.html">
+      <img src="./images/hungry-llama.png" alt="The Hungry Llama Logo" class="h-14 transition-all duration-300">
+    </a>
+
+   
+    <ul class="hidden md:flex space-x-6 text-[#FBF9F3] font-semibold uppercase">
+      <li><a href="index.html" class="relative text-[#C9A886] hover:text-[#fee878] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Home</a></li>
+      <li><a href="menu.html" class="relative text-[#C9A886] hover:text-[#0ad5e8] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Menu</a></li>
+      <li><a href="about.html" class="relative text-[#C9A886] hover:text-[#c15c60] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">About Us</a></li>
+      <li><a href="contact.html" class="relative text-[#C9A886] hover:text-[#9a825c] after:block after:content-[''] after:h-[2px] after:w-full after:bg-[#C9A886] after:scale-x-0 hover:after:scale-x-100 after:transition-all">Contact</a></li>
+    </ul>
+
+    
+    <button id="menu-btn" class="md:hidden text-[#f94002] text-2xl focus:outline-none">
+      &#9776;
+    </button>
+  </nav>
+
+  <div id="mobile-menu" class="hidden md:hidden absolute top-16 left-0 w-full bg-[#8E6B59] shadow-md transition-all duration-300">
+    <ul class="text-center py-4 space-y-4">
+      <li><a href="index.html" class="block text-[#C9A886] text-lg hover:text-[#fee878]">Home</a></li>
+      <li><a href="menu.html" class="block text-[#C9A886] text-lg hover:text-[#0ad5e8]">Menu</a></li>
+      <li><a href="about.html" class="block text-[#C9A886] text-lg hover:text-[#c15c60]">About Us</a></li>
+      <li><a href="contact.html" class="block text-[#C9A886] text-lg hover:text-[#9a825c]">Contact</a></li>
+    </ul>
+  </div>
+</header>
+
+
+  <section class="relative text-center text-white py-8 bg-[#8E6B59]">
+    <h1 class="text-4xl font-bold fade-in">Get in Touch</h1>
+    <p class="text-lg mt-3 fade-in">We’d love to hear from you! Reach out with any questions or feedback.</p>
+  </section>
+
+
+  <main class="max-w-6xl mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
+      <div class="space-y-6 fade-in text-center">
+      
+        <img src="./images/hungry-llama.png" alt="The Hungry Llama Logo" class="h-52 mx-auto">
+        <h2 class="text-3xl font-bold text-[#6F4A3D]">Contact Information</h2>
+        <p class="text-gray-700">Feel free to reach out to us via phone, email, or visit us at our location.</p>
+
+        <div class="flex items-center space-x-3 justify-center">
+          <span class="text-[#8E6B59] text-2xl">&#x1F4CD;</span>
+          <p class="text-gray-700">1404 Food Road, Culinary City</p>
+        </div>
+
+        <div class="flex items-center space-x-3 justify-center">
+          <span class="text-[#8E6B59] text-2xl">&#x260E;</span>
+          <p class="text-gray-700">555-3212</p>
+        </div>
+
+        <div class="flex items-center space-x-3 justify-center">
+          <span class="text-[#8E6B59] text-2xl">&#x2709;</span>
+          <p class="text-gray-700">info@hungryllama.com</p>
+        </div>
+      </div>
+
+     
+      <div class="bg-white shadow-md rounded-lg p-6 fade-in">
+        <h2 class="text-2xl font-bold text-[#6F4A3D] mb-4">Send Us a Message</h2>
+        <form action="#" method="POST">
+          <div class="mb-4">
+            <label class="block text-gray-700 font-semibold">Name</label>
+            <input type="text" class="w-full mt-1 p-2 border rounded-md focus:ring-[#8E6B59] focus:ring-2" placeholder="Your Name" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-semibold">Email</label>
+            <input type="email" class="w-full mt-1 p-2 border rounded-md focus:ring-[#8E6B59] focus:ring-2" placeholder="Your Email" required>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-semibold">Message Type</label>
+            <select class="w-full mt-1 p-2 border rounded-md focus:ring-[#8E6B59] focus:ring-2">
+              <option>General Request</option>
+              <option>Restaurant</option>
+              <option>Office</option>
+            </select>
+          </div>
+          <div class="mb-4">
+            <label class="block text-gray-700 font-semibold">Message</label>
+            <textarea class="w-full mt-1 p-2 border rounded-md focus:ring-[#8E6B59] focus:ring-2" rows="4" placeholder="Your Message" required></textarea>
+          </div>
+          <button type="submit" class="w-full bg-[#8E6B59] text-white py-2 rounded-md font-semibold hover:bg-[#738D8F] hover:scale-105 transition-transform">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </div>
+
+    
+    <div class="mt-12 fade-in">
+      <h2 class="text-2xl font-bold text-[#6F4A3D] text-center">Visit Us</h2>
+      <p class="text-gray-700 text-center">Come by and enjoy a meal in our cozy restaurant.</p>
+      <div class="mt-4">
+        <iframe 
+          class="w-full h-80 rounded-md shadow-md"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3274.6519546470217!2d138.48518417548766!3d-34.8398423700063!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6ab0c7f36299f1b3%3A0x5febb088c2987331!2sThe%20Hungry%20Llama!5e0!3m2!1sis!2sis!4v1741782287877!5m2!1sis!2sis"
+          allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </main>
+
+
+  <footer class="mt-8 p-4 text-center text-[#FBF9F3] bg-[#8E6B59]">
+    <p>1404 Food Road | Phone: 555-3212 | Open: 11:00 AM - 10:00 PM</p>
+  </footer>
+
+</body>
+</html>

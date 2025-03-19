@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@theme {
+    --color-midnight: red;
+  
+  }
+
+  @custom-variant dark (&:where(.dark, .dark*));
+  
+  .btn-add {@apply bg-black hover:bg-sky-950 text-white cursor-pointer w-full py-2 rounded-md mt-3;
+ }
