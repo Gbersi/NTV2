@@ -4,7 +4,6 @@ const cvData = {
   header: {
     title: "Gunnar Bersi Björnsson",
     name: "Öryggisráðgjafi & Forritari",
-
     image: "/headshot.jpg",
   },
   contact: {
@@ -21,8 +20,7 @@ const cvData = {
   workExperience: [
     {
       title: "Borgarleikhúsið",
-      period:
-        "Sviðsmaður 2022 – 2023",
+      period: "Sviðsmaður 2022 – 2023",
       description:
         "Setja upp og taka niður leikmyndir fyrir Leiksýningar. Stjórnaði sviði og tjaldi fyrir 9 Líf sýninguna ásamt hlutverki í sýningunni. Sýningarstjóri á nemendasýningum og dans-sýningum. Setja upp troll og rigga öryggisbúnað og festingar.",
     },
@@ -45,6 +43,8 @@ const cvData = {
       course: "Forritun",
       period: "2024 – Núverandi",
     },
+  ],
+  Recomendations: [
     {
       name: "Eyþór Guðmundsson",
       title: "Fyrrum verkefnastjóri 115 og rekstrarstjóri Geo Security Iceland",
@@ -52,7 +52,7 @@ const cvData = {
     },
     {
       name: "Kjartan Þórisson",
-      title: "Deildarstjóri Leiksviðs", 
+      title: "Deildarstjóri Leiksviðs",
       contact: "+354 774-5454",
     },
   ],
@@ -68,7 +68,8 @@ const cvData = {
       "Góður í mannlegum samskiptum",
     ],
     programming: {
-      languages: "Flutter, Dart, HTML, CSS, Tailwind, Java, Python, JavaScript, C#,TypeScript,React",
+      languages:
+        "Flutter, Dart, HTML, CSS, Tailwind, Java, Python, JavaScript, C#, TypeScript, React",
       interests: "Mobile app-þróun, vefþróun, gervigreind",
       tools:
         "Visual Studio Code, Android Studio, IntelliJ IDEA, GitHub, Git, Navision, Excel, SharePoint, Teams",
@@ -173,34 +174,44 @@ export default function Home() {
                 <div key={index} className="pb-2">
                   {edu.institution && (
                     <p>
-                      <span className="font-medium">Stofnun:</span> {edu.institution}
+                      <span className="font-medium">Stofnun:</span>{" "}
+                      {edu.institution}
                     </p>
                   )}
                   {edu.course && (
                     <p>
-                      <span className="font-medium">Grein:</span> {edu.course}
+                      <span className="font-medium">Grein:</span>{" "}
+                      {edu.course}
                     </p>
                   )}
                   {edu.period && (
                     <p>
-                      <span className="font-medium">Tímabil:</span> {edu.period}
+                      <span className="font-medium">Tímabil:</span>{" "}
+                      {edu.period}
                     </p>
                   )}
-                  {edu.contact && (
-                    <p>
-                      <span className="font-medium">Sími:</span> {edu.contact}
-                    </p>
-                  )}
-                  {edu.name && (
-                    <p>
-                      <span className="font-medium">Nafn:</span> {edu.name}
-                    </p>
-                  )}
-                  {edu.title && (
-                    <p>
-                      <span className="font-medium">Staða:</span> {edu.title}
-                    </p>
-                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Recommendations */}
+          <section className="p-6">
+            <h3 className="text-2xl font-semibold uppercase tracking-wide mb-5 border-l-4 pl-3 text-gray-300">
+              Meðmælendur
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-base text-gray-300">
+              {cvData.Recomendations.map((rec, index) => (
+                <div key={index} className="p-4 border border-gray-700 rounded">
+                  <p>
+                    <span className="font-medium">Nafn:</span> {rec.name}
+                  </p>
+                  <p>
+                    <span className="font-medium">Staða:</span> {rec.title}
+                  </p>
+                  <p>
+                    <span className="font-medium">Sími:</span> {rec.contact}
+                  </p>
                 </div>
               ))}
             </div>
