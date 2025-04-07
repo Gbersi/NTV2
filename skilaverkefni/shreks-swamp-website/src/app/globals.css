@@ -1,0 +1,126 @@
+
+body {
+  background-image: url('/shrekswamp.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+.container {
+  min-height: 100vh;
+  padding: 20px;
+  text-align: center;
+  position: relative;
+}
+
+
+.circular {
+  border-radius: 50%;
+}
+
+
+.shrek {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  transition: transform 0.2s ease;
+}
+
+
+.donkey {
+  width: 150px;
+  height: 150px;
+  transition: transform 0.6s;
+}
+
+
+.title {
+  transition: color 0.2s ease;
+  font-size: 2rem;
+  margin-top: 180px; 
+  color: darkgreen;
+}
+
+
+.button {
+  background-color: darkgreen;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  margin: 10px auto;
+  display: block;
+  width: 300px;
+}
+
+
+.input {
+  padding: 10px;
+  font-size: 1rem;
+  margin: 10px auto;
+  display: block;
+  width: 255px;
+}
+
+
+.info-box {
+  background-color: rgba(255, 255, 255, 0.2); 
+  padding: 5px;
+  border: 1px solid #ccc;
+  display: block;         
+  max-width: 300px;       
+  margin: 5px auto;       
+}
+
+
+.volume-control {
+  margin: 20px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+@keyframes throwMud {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(150px, -100px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(300px, -200px) scale(1);
+    opacity: 0;
+  }
+}
+
+
+.mud {
+  position: fixed;
+  left: 10px; 
+  top: 50%;   
+  width: 200px;
+  animation: throwMud 2s forwards;
+  z-index: 1000;
+}
+
+
+.mud-button {
+  position: fixed;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1100;
+  background-color: darkgreen;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
