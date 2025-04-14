@@ -1,0 +1,86 @@
+
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+@import "tailwindcss/preflight";
+@tailwind utilities;
+
+
+
+
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: 'Inter', 'Open Sans', sans-serif;
+}
+
+
+.bg-dynamic {
+  background: linear-gradient(45deg, #98050a, #FAD0C4, #006ee4, #FF9A9E);
+  background-size: 400% 400%;
+  animation: gradientAnimation 15s ease infinite;
+}
+
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.card {
+  background: white;
+  border-radius: 0.75rem; 
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+}
+
+input {
+  color: black !important;
+}
+
+
+::placeholder {
+  color: black;
+  opacity: 1;
+}
+
+button {
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 700;
+}
+
+
+.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
