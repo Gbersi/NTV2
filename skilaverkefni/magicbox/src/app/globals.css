@@ -1,0 +1,58 @@
+@import "tailwindcss/preflight";
+@import "tailwindcss";
+@tailwind utilities;
+
+/* ===============================
+   🌐 CSS VARIABLES FOR THEMING
+================================= */
+:root {
+  --color-bg: #f8fafc;
+  --color-fg: #0f172a;
+  --font-sans: var(--font-geist-sans, system-ui);
+  --font-mono: var(--font-geist-mono, ui-monospace);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0a0a0a;
+    --color-fg: #e5e5e5;
+  }
+}
+
+/* ===============================
+   🧼 GLOBAL RESET + TYPOGRAPHY
+================================= */
+@layer base {
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    @apply underline hover:no-underline transition-colors text-blue-500;
+  }
+}
+
+/* ===============================
+   🔘 REUSABLE BUTTON CLASS
+================================= */
+@layer components {
+  .magic-btn {
+    @apply px-5 py-3 bg-white text-gray-900 rounded-xl shadow-lg flex items-center gap-2 hover:bg-gray-100 active:scale-95 transition-all border;
+  }
+}
+
+/* ===============================
+   🧠 OPTIONAL TOOLTIP STYLE
+================================= */
+@layer components {
+  .tooltip {
+    @apply text-xs bg-black text-white px-2 py-1 rounded shadow-md;
+  }
+}
