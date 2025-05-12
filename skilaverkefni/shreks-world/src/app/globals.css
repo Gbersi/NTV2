@@ -1,0 +1,204 @@
+
+@import "tailwindcss";
+
+
+:root {
+  --background-light: #ffffff;
+  --foreground-light: #171717;
+  --background-dark: #0a0a0a;
+  --foreground-dark: #ededed;
+  
+  --primary-color: #4CAF50; 
+  --secondary-color: #45a049; 
+  
+  --font-family-sans: 'Roboto', sans-serif;
+  --font-family-mono: 'Courier New', monospace;
+}
+
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--background-light);
+  color: var(--foreground-light);
+  font-family: var(--font-family-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s, color 0.3s; 
+}
+
+html {
+  scroll-behavior: smooth; 
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a:hover {
+  color: var(--primary-color);
+  transition: color 0.3s ease;
+}
+
+h1, h2, h3 {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+/* Responsive typography */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  p {
+    font-size: 1rem;
+  }
+}
+
+
+.card img, .image {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img:hover, .image:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+button, .button-link {
+  padding: 12px 30px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover, .button-link:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px); 
+}
+.card {
+  background: var(--background-light);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+.card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+.card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+.card p {
+  font-size: 1rem;
+  margin-bottom: 20px;
+}
+.card .link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+.card .link:hover {
+  text-decoration: underline;
+}
+.card .link:visited {
+  color: var(--secondary-color);
+}
+.card .link:active {
+  color: var(--secondary-color);
+}
+.card .link:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+.card .link:hover {
+  color: var(--primary-color);
+}
+
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-light: var(--background-dark);
+    --foreground-light: var(--foreground-dark);
+  }
+
+  body {
+    background: var(--background-dark);
+    color: var(--foreground-dark);
+  }
+
+  .card:hover {
+    box-shadow: 0 8px 16px rgba(255, 255, 255, 0.2);
+  }
+
+  button:hover, .button-link:hover {
+    background-color: var(--secondary-color);
+  }
+}
+
+
+button, .button-link, a {
+  transition: all 0.3s ease;
+}
+
+button:hover, .button-link:hover, a:hover {
+  text-shadow: 0 0 5px #4CAF50, 0 0 10px #4CAF50, 0 0 15px #4CAF50;
+}
+
+
+.page-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.center-column {
+  flex-direction: column;
+}
+
+
+@media (max-width: 600px) {
+  .page-grid {
+    grid-template-columns: 1fr;
+  }
+}
