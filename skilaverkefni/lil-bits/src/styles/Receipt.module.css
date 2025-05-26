@@ -1,0 +1,52 @@
+.container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 1rem;
+  font-family: Inter, sans-serif;
+}
+
+.details {
+  background: var(--bg-light);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.details > div {
+  margin-bottom: 0.75rem;
+}
+
+.total {
+  font-weight: bold;
+  margin-top: 0.75rem;
+}
+
+.meta {
+  margin-top: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.homeButton,
+.editButton {
+  padding: 0.75rem 1.5rem;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.homeButton {
+  background: var(--color-accent);
+}
+
+.editButton {
+  background: var(--color-secondary);
+}

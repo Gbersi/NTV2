@@ -1,0 +1,115 @@
+:root {
+  --color-primary: #3E6053;
+  --color-secondary: #C16757;
+  --color-accent: #BA2329;
+  --bg-light: #fff;
+  --border: #ddd;
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1.5rem;
+}
+
+.topRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+.carouselBox {
+  background: var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.orderBox {
+  background: var(--bg-light);
+  border: 2px solid var(--color-secondary);
+  border-radius: 8px;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.orderBox h2 {
+  margin: 0 0 1rem;
+  font-size: 1.75rem;
+  color: var(--color-primary);
+}
+
+.newOrderForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: stretch;
+}
+
+.orderInput {
+  width: 100%;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.startError {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.orderBox button {
+  width: 100%;
+}
+
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.findBox,
+.aboutBox {
+  background: var(--bg-light);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.findBox h3,
+.aboutBox h3 {
+  margin-top: 0;
+  color: var(--color-primary);
+}
+
+.findForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.findInput {
+  flex: 1;
+}
+
+.findBox button {
+  padding: 0.5rem 1rem;
+}
+
+.findMessage {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+}
+
+.aboutBox p {
+  margin-top: 0.5rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.loading {
+  padding: 2rem;
+  text-align: center;
+  color: #666;
+}
