@@ -44,7 +44,7 @@ app.put('/update-order', (req: Request, res: Response): void => {
   res.json({ success: true, order: updated });
 });
 
-// GET /order/:email
+
 app.get('/order/:email', (req: Request, res: Response): void => {
   const email = req.params.email;
   const order = orders.find(o => o.email === email);

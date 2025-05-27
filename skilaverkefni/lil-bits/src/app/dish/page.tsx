@@ -1,104 +1,161 @@
+// src/app/dish/page.tsx
 'use client'
+
 import React, { useEffect, useState, useContext } from 'react'
-import { Box, Card, Typography, Button, CircularProgress } from '@mui/joy'
 import { useRouter } from 'next/navigation'
+import {
+  Box,
+  Card,
+  Typography,
+  Button,
+  CircularProgress,
+} from '@mui/joy'
 import { OrderContext } from 'context/OrderContext'
 
-interface ApiMeal {
+interface Meal {
   idMeal: string
   strMeal: string
   strMealThumb: string
-  strInstructions: string
 }
 
 export default function DishPage() {
-  const [meal, setMeal] = useState<ApiMeal | null>(null)
-  const [loading, setLoading] = useState(true)
-  const { order, setOrder } = useContext(OrderContext)
   const router = useRouter()
+  const { order, setOrder } = useContext(OrderContext)
+
+  const [meal, setMeal] = useState<Meal | null>(null)
+  const [price, setPrice] = useState<number>(0)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+ 
+  const loadMeal = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch('https://www.themealdb.com/api/json/v1/1/random.php')
+      const data = await res.json()
+      const m = data.meals[0] as Meal
+      setMeal(m)
+      setPrice(parseFloat((Math.random() * 8 + 2).toFixed(2))) 
+    } catch (err) {
+      console.error(err)
+      setError('Failed to fetch a meal. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    async function fetchDish() {
-      try {
-        const r = await fetch(
-          'https://www.themealdb.com/api/json/v1/1/random.php'
-        )
-        const data = await r.json()
-        setMeal(data.meals[0])
-      } catch {
-      } finally {
-        setLoading(false)
-      }
-    }
-    fetchDish()
+    loadMeal()
   }, [])
 
-  if (loading)
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 5 }}>
-        <CircularProgress />
-      </Box>
-    )
-  if (!meal)
-    return <Typography>Failed to load. Please try again.</Typography>
-
-  // Map to your type + random price/calories
-  const price = parseFloat((Math.random() * 20 + 5).toFixed(2))
-  const calories = Math.floor(Math.random() * 800 + 200)
-
-  const handleSelect = () => {
+  const handleNext = () => {
+    if (!meal) return
     setOrder({
       ...order,
       dish: {
         id: meal.idMeal,
         name: meal.strMeal,
-        description: '', // omit instructions
         imageSource: meal.strMealThumb,
         price,
-        category: meal.strInstructions.slice(0, 20), // or map properly
-        cuisine: 'Unknown',
-        calories,
+        category: '',
+        cuisine: '',
+        description: '',
       },
     })
     router.push('/drinks')
   }
 
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
+        <CircularProgress />
+      </Box>
+    )
+  }
+
+  if (error || !meal) {
+    return (
+      <Box sx={{ textAlign: 'center', mt: 6 }}>
+        <Typography level="h4" color="danger">
+          {error ?? 'No meal found.'}
+        </Typography>
+        <Button sx={{ mt: 2 }} onClick={loadMeal}>
+          Try Again
+        </Button>
+      </Box>
+    )
+  }
+
   return (
-    <Box sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
-      <Card variant="outlined" sx={{ p: 3 }}>
-        <Typography level="h2" sx={{ color: 'var(--color-primary)', mb: 2 }}>
+    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
+      <Card
+        variant="outlined"
+        sx={{
+          maxWidth: 600,
+          width: '100%',
+          p: 3,
+          textAlign: 'center',
+          position: 'relative',
+        }}
+      >
+      
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            bgcolor: 'rgba(0,0,0,0.7)',
+            color: '#fff',
+            px: 1.5,
+            py: 0.5,
+            borderRadius: '4px',
+            fontWeight: 'bold',
+            fontSize: '1rem',
+          }}
+        >
+          ${price.toFixed(2)}
+        </Box>
+
+        <Typography level="h2" sx={{ mb: 2 }}>
           Your Random Dish
         </Typography>
+
         <Box
           component="img"
           src={meal.strMealThumb}
           alt={meal.strMeal}
-          sx={{ width: '100%', borderRadius: 1, mb: 2 }}
+          sx={{
+            width: '100%',
+            height: 200,
+            objectFit: 'cover',
+            borderRadius: 2,
+            mb: 2,
+          }}
         />
-        <Typography level="h3" sx={{ mb: 1 }}>
+
+        <Typography level="h4" sx={{ mb: 3 }}>
           {meal.strMeal}
         </Typography>
-        <Typography sx={{ fontWeight: 'bold', mb: 1 }}>
-          ${price.toFixed(2)} &bull; {calories} kcal
-        </Typography>
-        <Box display="flex" gap={1}>
+
+        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
           <Button
-            variant="soft"
-            onClick={() => window.location.reload()}
+            variant="outlined"
+            onClick={loadMeal}
             sx={{ flex: 1 }}
           >
-            Pick Another
+            Generate New Dish
           </Button>
           <Button
             variant="solid"
-            onClick={handleSelect}
+            onClick={handleNext}
             sx={{
               flex: 1,
               backgroundColor: 'var(--color-secondary)',
               '&:hover': { backgroundColor: 'var(--color-accent)' },
             }}
           >
-            Looks Good → Drinks
+            Next: Choose Drinks
           </Button>
         </Box>
       </Card>

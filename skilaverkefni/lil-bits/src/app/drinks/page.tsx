@@ -1,27 +1,29 @@
+// src/app/drinks/page.tsx
 'use client'
-import React, { useEffect, useState, useContext } from 'react'
+
+import React, { useEffect, useState, useContext, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Box,
-  Grid,
-  Card,
-  Typography,
   Button,
+  Card,
+  Grid,
+  IconButton,
   Input,
   Select,
   Option,
   CircularProgress,
 } from '@mui/joy'
-import { useRouter } from 'next/navigation'
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 import { OrderContext } from 'context/OrderContext'
 
-interface ApiDrink {
+interface RawDrink {
   idDrink: string
   strDrink: string
   strDrinkThumb: string
 }
-
-interface Drink extends ApiDrink {
-  qty: number
+interface Drink extends RawDrink {
   price: number
 }
 
@@ -29,195 +31,255 @@ export default function DrinksPage() {
   const { order, setOrder } = useContext(OrderContext)
   const router = useRouter()
 
-  const [cats, setCats] = useState<string[]>([])
-  const [cat, setCat] = useState('All')
-  const [term, setTerm] = useState('')
-  const [drinks, setDrinks] = useState<Drink[]>([])
-  const [loading, setLoading] = useState(true)
-
+ 
   useEffect(() => {
-    if (!order.dish) return router.push('/dish')
-    fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list')
-      .then((r) => r.json())
-      .then((d) => {
-        const arr = d.drinks.map((x: any) => x.strCategory)
-        setCats(['All', ...arr])
-      })
-      .catch(() => setCats(['All']))
+    if (!order.dish) {
+      router.replace('/dish')
+    }
   }, [order.dish, router])
 
-  useEffect(() => {
-    if (!cats.length) return
-    loadByCat('All')
-  }, [cats])
+  const [categories, setCategories] = useState<string[]>([])
+  const [activeCategory, setActiveCategory] = useState<string>('All')
+  const [searchTerm, setSearchTerm] = useState('')
+  const [drinks, setDrinks] = useState<Drink[]>([])
+  const [loading, setLoading] = useState(true)
+  const [qtyMap, setQtyMap] = useState<Record<string, number>>({})
+
 
   useEffect(() => {
-    if (term.trim()) loadBySearch(term.trim())
-    else loadByCat(cat)
-  }, [term])
+    fetch(
+      'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list'
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        const cats = data.drinks.map(
+          (c: { strCategory: string }) => c.strCategory
+        )
+        setCategories(['All', ...cats])
+      })
+      .catch(console.error)
+  }, [])
 
-  async function loadByCat(c: string) {
+  useEffect(() => {
     setLoading(true)
     const url =
-      c === 'All'
+      activeCategory === 'All'
         ? 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic'
         : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(
-            c
+            activeCategory
           )}`
-    try {
-      const r = await fetch(url)
-      const d = await r.json()
-      const arr: ApiDrink[] = d.drinks || []
-      setDrinks(
-        arr.slice(0, 12).map((x) => ({
-          ...x,
-          qty: 0,
-          price: parseFloat((Math.random() * 10 + 3).toFixed(2)),
+
+    fetch(url)
+      .then((r) => r.json())
+      .then((data) => {
+        const list: Drink[] = data.drinks.slice(0, 12).map((d: RawDrink) => ({
+          ...d,
+        
+          price: parseFloat((Math.random() * 8 + 2).toFixed(2)),
         }))
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
+        setDrinks(list)
+        
+        setQtyMap((prev) => {
+          const next = { ...prev }
+          list.forEach((d) => {
+            if (next[d.idDrink] == null) next[d.idDrink] = 0
+          })
+          return next
+        })
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }, [activeCategory])
 
-  async function loadBySearch(t: string) {
-    setLoading(true)
-    const [byName, byIng] = await Promise.all([
-      fetch(
-        `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${encodeURIComponent(
-          t
-        )}`
-      ).then((r) => r.json()),
-      fetch(
-        `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(
-          t
-        )}`
-      ).then((r) => r.json()),
-    ]).catch(() => [{ drinks: [] }, { drinks: [] }])
-    const merged = new Map<string, ApiDrink>()
-    ;[...(byName.drinks || []), ...(byIng.drinks || [])].forEach((x: any) =>
-      merged.set(x.idDrink, x)
-    )
-    const arr = Array.from(merged.values())
-    setDrinks(
-      arr.map((x) => ({
-        ...x,
-        qty: 0,
-        price: parseFloat((Math.random() * 10 + 3).toFixed(2)),
-      }))
-    )
-    setLoading(false)
-  }
 
-  const inc = (id: string) =>
-    setDrinks((d) =>
-      d.map((x) => (x.idDrink === id ? { ...x, qty: x.qty + 1 } : x))
+  const filtered = useMemo(() => {
+    if (!searchTerm) return drinks
+    const t = searchTerm.toLowerCase()
+    return drinks.filter((d) =>
+      d.strDrink.toLowerCase().includes(t)
     )
-  const dec = (id: string) =>
-    setDrinks((d) =>
-      d.map((x) => (x.idDrink === id ? { ...x, qty: Math.max(0, x.qty - 1) } : x))
-    )
+  }, [searchTerm, drinks])
 
-  const confirm = () => {
-    const sel = drinks
-      .filter((d) => d.qty > 0)
+  const adjustQty = (id: string, delta: number) =>
+    setQtyMap((prev) => {
+      const cur = prev[id] || 0
+      return { ...prev, [id]: Math.max(0, cur + delta) }
+    })
+
+  const handleConfirm = () => {
+  
+    const picked = drinks
+      .filter((d) => (qtyMap[d.idDrink] || 0) > 0)
       .map((d) => ({
         id: d.idDrink,
         name: d.strDrink,
-        description: '',
         imageSource: d.strDrinkThumb,
         price: d.price,
-        category: cat === 'All' ? 'Drink' : cat,
+        qty: qtyMap[d.idDrink] || 0,
+        description: '',
+        category: 'Drink',
         brewer: '',
-        qty: d.qty,
       }))
-    setOrder({ ...order, drinks: sel })
+
+    // merge into order context
+    setOrder({
+      ...order,   // keeps order.dish
+      drinks: picked,
+    })
+
+    // navigate to /order
     router.push('/order')
   }
 
   return (
     <Box sx={{ p: 4 }}>
-      <Typography
-        component="h2"
-        sx={{ fontSize: '2rem', mb: 2, color: 'var(--color-primary)' }}
+      {/* Controls */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          mb: 3,
+          flexWrap: 'wrap',
+        }}
       >
-        Choose Your Drinks
-      </Typography>
-
-      <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
-        <Input
-          placeholder="Search by name or ingredient"
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          sx={{ flex: 1, minWidth: 240 }}
-        />
         <Select
-          value={cat}
-          onChange={(_, v) => v && setCat(v)}
-          sx={{ minWidth: 200 }}
+          value={activeCategory}
+          onChange={(_, v) => setActiveCategory(v!)}
+          sx={{ minWidth: 160 }}
         >
-          {cats.map((c) => (
-            <Option key={c} value={c}>
-              {c}
+          {categories.map((cat) => (
+            <Option key={cat} value={cat}>
+              {cat}
             </Option>
           ))}
         </Select>
-      </Box>
 
-      {loading ? (
-        <Box sx={{ textAlign: 'center', mt: 4 }}>
-          <CircularProgress />
-        </Box>
-      ) : (
-        <Grid container spacing={2}>
-          {drinks.map((d) => (
-            <Grid key={d.idDrink} xs={6} sm={4} md={3}>
-              <Card
-                variant="outlined"
-                sx={{
-                  p: 1,
-                  bgcolor: d.qty > 0 ? 'rgba(144,238,144,0.3)' : 'background.body',
-                  width: 260,
-                  mx: 'auto',
-                }}
-              >
-                <Box
-                  component="img"
-                  src={d.strDrinkThumb}
-                  alt={d.strDrink}
-                  sx={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 1 }}
-                />
-                <Typography sx={{ fontSize: '1.1rem', mt: 1 }}>
-                  {d.strDrink}
-                </Typography>
-                <Typography sx={{ fontWeight: 'bold', mb: 1 }}>
-                  ${d.price.toFixed(2)}
-                </Typography>
-                <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-                  <Button size="sm" onClick={() => dec(d.idDrink)} disabled={d.qty === 0}>
-                    –
-                  </Button>
-                  <Typography>{d.qty}</Typography>
-                  <Button size="sm" onClick={() => inc(d.idDrink)}>
-                    +
-                  </Button>
-                </Box>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
-      )}
+        <Input
+          placeholder="Search drinks…"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ flex: 1, minWidth: 300 }}
+        />
 
-      <Box sx={{ textAlign: 'center', mt: 4 }}>
         <Button
           variant="solid"
-          color="neutral"
-          onClick={confirm}
-          disabled={drinks.every((d) => d.qty === 0)}
+          onClick={handleConfirm}
+          disabled={!Object.values(qtyMap).some((n) => n > 0)}
+          sx={{
+            backgroundColor: 'var(--color-secondary)',
+            '&:hover': { backgroundColor: 'var(--color-accent)' },
+          }}
         >
           Confirm Selection
         </Button>
       </Box>
+
+      {/* Loading */}
+      {loading && (
+        <Box sx={{ textAlign: 'center', mt: 8 }}>
+          <CircularProgress />
+        </Box>
+      )}
+
+      {/* Grid */}
+      {!loading && (
+        <Grid container spacing={3} justifyContent="center">
+          {filtered.map((d) => {
+            const q = qtyMap[d.idDrink] || 0
+            return (
+              <Grid key={d.idDrink} xs="auto">
+                <Card
+                  variant="outlined"
+                  sx={{
+                    width: 220,
+                    p: 1,
+                    position: 'relative',
+                    bgcolor: q > 0 ? '#e8f5e9' : 'background.surface',
+                    transition: 'transform .2s, box-shadow .2s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 'md',
+                    },
+                  }}
+                >
+                  {/* price badge */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      bgcolor: 'rgba(0,0,0,0.6)',
+                      color: '#fff',
+                      px: 1,
+                      borderRadius: 1,
+                      fontSize: 12,
+                    }}
+                  >
+                    ${d.price.toFixed(2)}
+                  </Box>
+
+                  {/* image */}
+                  <Box
+                    component="img"
+                    src={d.strDrinkThumb}
+                    alt={d.strDrink}
+                    sx={{
+                      width: '100%',
+                      height: 140,
+                      objectFit: 'cover',
+                      borderRadius: 1,
+                    }}
+                  />
+
+                  {/* name */}
+                  <Box
+                    sx={{
+                      mt: 1,
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                      textAlign: 'center',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {d.strDrink}
+                  </Box>
+
+                  {/* qty controls */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 1,
+                      mt: 1,
+                    }}
+                  >
+                    <IconButton
+                      size="sm"
+                      onClick={() => adjustQty(d.idDrink, -1)}
+                      disabled={q === 0}
+                    >
+                      <RemoveIcon fontSize="small" />
+                    </IconButton>
+                    <Box sx={{ minWidth: 24, textAlign: 'center' }}>
+                      {q}
+                    </Box>
+                    <IconButton
+                      size="sm"
+                      onClick={() => adjustQty(d.idDrink, +1)}
+                    >
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </Card>
+              </Grid>
+            )
+          })}
+        </Grid>
+      )}
     </Box>
   )
 }

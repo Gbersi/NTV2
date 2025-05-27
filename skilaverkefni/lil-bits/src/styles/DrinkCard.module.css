@@ -16,6 +16,7 @@
   flex-direction: column;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+.card:hover { transform: scale(1.02); box-shadow: 0 8px 16px rgba(0,0,0,0.15); }
 
 .image {
   width: 100%;

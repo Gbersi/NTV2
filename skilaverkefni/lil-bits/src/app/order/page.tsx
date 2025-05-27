@@ -1,160 +1,161 @@
-// src/app/order/page.tsx
 'use client'
 
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext, useState, useEffect, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { Box, Typography, Button } from '@mui/joy'
-import { OrderContext } from '../../context/OrderContext'
+import Box from '@mui/joy/Box'
+import Button from '@mui/joy/Button'
+import Grid from '@mui/joy/Grid'
+import Typography from '@mui/joy/Typography'
+import FormControl from '@mui/joy/FormControl'
+import FormLabel from '@mui/joy/FormLabel'
+import { OrderContext } from 'context/OrderContext'
 
 export default function OrderPage() {
   const { order, setOrder } = useContext(OrderContext)
-  const [date, setDate] = useState(order.date || '')
-  const [time, setTime] = useState(order.time || '16:00')
-  const [people, setPeople] = useState(order.people || 1)
-  const [email, setEmail] = useState(order.email || '')
+  const [email, setEmail] = useState(order.email ?? '')
+  const [date, setDate] = useState(order.date ?? '')
+  const [time, setTime] = useState(order.time ?? '16:00')
+  const [people, setPeople] = useState<number>(order.people ?? 1)
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
+  // If they somehow skipped the dish step, bounce back home
   useEffect(() => {
-    if (!order.dish || !order.drinks) {
-      router.push('/')
+    if (!order.dish) {
+      router.replace('/')
     }
-  }, [order, router])
-
-  const today = new Date().toISOString().split('T')[0]
-  const isWeekday = (d: Date) => {
-    const w = d.getDay()
-    return w >= 1 && w <= 5
-  }
+  }, [order.dish, router])
 
   const handleSubmit = () => {
     setError(null)
-
-    if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
-      setError('Please enter a valid email.')
+    // --- Validation ---
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.')
       return
     }
     if (!date) {
-      setError('Select a date.')
+      setError('Please select a date.')
       return
     }
-    const chosen = new Date(date)
-    chosen.setHours(0, 0, 0, 0)
-    const todayZero = new Date()
-    todayZero.setHours(0, 0, 0, 0)
-    if (chosen < todayZero) {
-      setError('Date must be today or later.')
-      return
-    }
-    if (!isWeekday(chosen)) {
-      setError('Date must be Mon–Fri.')
+    const picked = new Date(date)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    if (picked < today) {
+      setError('Date cannot be in the past.')
       return
     }
     if (!time) {
-      setError('Select a time.')
-      return
-    }
-    const [h] = time.split(':').map(Number)
-    if (h < 16 || h > 23) {
-      setError('Time between 16:00 and 23:00.')
+      setError('Please select a time.')
       return
     }
     if (people < 1 || people > 10) {
-      setError('People must be 1–10.')
+      setError('Number of people must be between 1 and 10.')
       return
     }
 
-    setOrder({
-      ...order,
-      date,
-      time,
-      people,
-      email,
-    })
+    // --- Save & Navigate ---
+    setOrder({ ...order, email, date, time, people })
     router.push('/receipt')
   }
 
+  // Simple shared style for inputs
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '8px',
+    border: '1px solid #ccc',
+    borderRadius: '4px',
+  }
+
   return (
-    <Box
-      component="section"
-      sx={{
-        backgroundImage: `url('/lilbits-order-bg.png')`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        p: 4,
-      }}
-    >
-      <Box
-        sx={{
-          backgroundColor: 'rgba(255,255,255,0.8)',
-          p: 4,
-          borderRadius: 2,
-          maxWidth: 400,
-          width: '100%',
-        }}
-      >
-        <Typography
-          component="h2"
-          sx={{ mb: 2, color: 'var(--color-primary)' }}
-        >
-          Finalize Your Order
+    <Box sx={{ maxWidth: 480, mx: 'auto', my: 4, px: 2 }}>
+      <Typography level="h2" sx={{ mb: 2, textAlign: 'center' }}>
+        Finalize Reservation
+      </Typography>
+
+      {error && (
+        <Typography color="danger" sx={{ mb: 2, textAlign: 'center' }}>
+          {error}
         </Typography>
-        {error && (
-          <Typography sx={{ color: 'red', mb: 2 }}>{error}</Typography>
-        )}
-        <Box
-          component="form"
-          sx={{
-            display: 'grid',
-            gap: 2,
-          }}
-        >
-          <label>
-            Date{' '}
-            <input
-              type="date"
-              value={date}
-              min={today}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </label>
-          <label>
-            Time{' '}
-            <input
-              type="time"
-              value={time}
-              min="16:00"
-              max="23:00"
-              onChange={(e) => setTime(e.target.value)}
-            />
-          </label>
-          <label>
-            People{' '}
-            <input
-              type="number"
-              value={people}
-              min={1}
-              max={10}
-              onChange={(e) => setPeople(Number(e.target.value))}
-            />
-          </label>
-          <label>
-            Email{' '}
+      )}
+
+      <Grid container spacing={2}>
+        {/* Email */}
+        <Grid xs={12}>
+          <FormControl>
+            <FormLabel>Email</FormLabel>
             <input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.target.value)
+              }
+              style={inputStyle}
             />
-          </label>
-          <Button variant="solid" onClick={handleSubmit}>
-            Complete Order
+          </FormControl>
+        </Grid>
+
+        {/* Date */}
+        <Grid xs={12}>
+          <FormControl>
+            <FormLabel>Date</FormLabel>
+            <input
+              type="date"
+              value={date}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setDate(e.target.value)
+              }
+              style={inputStyle}
+            />
+          </FormControl>
+        </Grid>
+
+        {/* Time */}
+        <Grid xs={12}>
+          <FormControl>
+            <FormLabel>Time</FormLabel>
+            <input
+              type="time"
+              value={time}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setTime(e.target.value)
+              }
+              style={inputStyle}
+            />
+          </FormControl>
+        </Grid>
+
+        {/* People */}
+        <Grid xs={12}>
+          <FormControl>
+            <FormLabel>People</FormLabel>
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={people}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setPeople(+e.target.value)
+              }
+              style={inputStyle}
+            />
+          </FormControl>
+        </Grid>
+
+        {/* Submit */}
+        <Grid xs={12}>
+          <Button
+            variant="solid"
+            fullWidth
+            onClick={handleSubmit}
+            sx={{
+              backgroundColor: 'var(--color-secondary)',
+              '&:hover': { backgroundColor: 'var(--color-accent)' },
+            }}
+          >
+            Confirm Reservation
           </Button>
-        </Box>
-      </Box>
+        </Grid>
+      </Grid>
     </Box>
   )
 }

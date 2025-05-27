@@ -1,23 +1,15 @@
-// **no** "use client" here — this is a server component
+// src/app/layout.tsx
+import './globals.css'
+import React, { ReactNode } from 'react'
+import ClientLayout from '../components/ClientLayout'
 
-import Providers from './providers'
-
-export const metadata = {
-  title: 'Lil Bits',
-  description: 'Order food and drinks randomly!',
-}
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head />
       <body>
-        <Providers>
-          {children}
-        </Providers>
+        {/* everything inside here is rendered on the client */}
+        <ClientLayout>{children}</ClientLayout>
       </body>
     </html>
   )
