@@ -1,3 +1,4 @@
+// src/app/providers.tsx
 'use client'
 
 import React from 'react'
@@ -6,6 +7,7 @@ import { ThemeProvider } from '@mui/joy'
 import { GlobalStyles } from '@mui/system'
 import { Inter } from 'next/font/google'
 import TopMenu from '../components/TopMenu'
+import Background from '../components/Background'     
 import { OrderProvider } from '../context/OrderContext'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -17,8 +19,8 @@ const theme = extendTheme({
     light: {
       palette: {
         primary:  { solidBg: '#3E6053', solidColor: '#fff' },
-        danger:   { solidBg: '#BA2329', solidColor: '#fff' },
         neutral:  { solidBg: '#C16757', solidColor: '#fff' },
+        danger:   { solidBg: '#BA2329', solidColor: '#fff' },
       },
     },
   },
@@ -42,11 +44,6 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               padding: 0,
               minHeight: '100%',
               fontFamily: inter.style.fontFamily,
-              backgroundImage: `url('/lilbits-bg1.png')`,
-              backgroundSize: 'cover',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundAttachment: 'fixed',
               display: 'flex',
               flexDirection: 'column',
             },
@@ -60,10 +57,14 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             },
           }}
         />
-     
         <OrderProvider>
+          {/* dynamic fixed‐background based on pathname */}
+          <Background />
+          {/* your top nav */}
           <TopMenu />
+          {/* page content */}
           <main>{children}</main>
+          {/* toasts if you use them */}
           <ToastContainer position="bottom-right" />
         </OrderProvider>
       </ThemeProvider>

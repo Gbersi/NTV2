@@ -2,24 +2,28 @@
 
 import React, { useContext, useState, useEffect, ChangeEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import Box from '@mui/joy/Box'
-import Button from '@mui/joy/Button'
-import Grid from '@mui/joy/Grid'
-import Typography from '@mui/joy/Typography'
-import FormControl from '@mui/joy/FormControl'
-import FormLabel from '@mui/joy/FormLabel'
+import {
+  Box,
+  Button,
+  Grid,
+  Typography,
+  FormControl,
+  FormLabel,
+} from '@mui/joy'
 import { OrderContext } from 'context/OrderContext'
 
 export default function OrderPage() {
   const { order, setOrder } = useContext(OrderContext)
+  const router = useRouter()
+
+  // Local form state
   const [email, setEmail] = useState(order.email ?? '')
   const [date, setDate] = useState(order.date ?? '')
   const [time, setTime] = useState(order.time ?? '16:00')
   const [people, setPeople] = useState<number>(order.people ?? 1)
   const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
 
-  // If they somehow skipped the dish step, bounce back home
+  // If no dish was picked, bounce back to home
   useEffect(() => {
     if (!order.dish) {
       router.replace('/')
@@ -28,7 +32,7 @@ export default function OrderPage() {
 
   const handleSubmit = () => {
     setError(null)
-    // --- Validation ---
+
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       setError('Please enter a valid email address.')
       return
@@ -53,17 +57,9 @@ export default function OrderPage() {
       return
     }
 
-    // --- Save & Navigate ---
+    // Save into context and go to receipt
     setOrder({ ...order, email, date, time, people })
     router.push('/receipt')
-  }
-
-  // Simple shared style for inputs
-  const inputStyle: React.CSSProperties = {
-    width: '100%',
-    padding: '8px',
-    border: '1px solid #ccc',
-    borderRadius: '4px',
   }
 
   return (
@@ -83,13 +79,20 @@ export default function OrderPage() {
         <Grid xs={12}>
           <FormControl>
             <FormLabel>Email</FormLabel>
-            <input
+            <Box
+              component="input"
               type="email"
               value={email}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setEmail(e.target.value)
               }
-              style={inputStyle}
+              sx={{
+                width: '100%',
+                p: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
             />
           </FormControl>
         </Grid>
@@ -98,13 +101,20 @@ export default function OrderPage() {
         <Grid xs={12}>
           <FormControl>
             <FormLabel>Date</FormLabel>
-            <input
+            <Box
+              component="input"
               type="date"
               value={date}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setDate(e.target.value)
               }
-              style={inputStyle}
+              sx={{
+                width: '100%',
+                p: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
             />
           </FormControl>
         </Grid>
@@ -113,13 +123,20 @@ export default function OrderPage() {
         <Grid xs={12}>
           <FormControl>
             <FormLabel>Time</FormLabel>
-            <input
+            <Box
+              component="input"
               type="time"
               value={time}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setTime(e.target.value)
               }
-              style={inputStyle}
+              sx={{
+                width: '100%',
+                p: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
             />
           </FormControl>
         </Grid>
@@ -128,15 +145,22 @@ export default function OrderPage() {
         <Grid xs={12}>
           <FormControl>
             <FormLabel>People</FormLabel>
-            <input
+            <Box
+              component="input"
               type="number"
-              min={1}
-              max={10}
               value={people}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setPeople(+e.target.value)
               }
-              style={inputStyle}
+              sx={{
+                width: '100%',
+                p: 1,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 1,
+              }}
+              min={1}
+              max={10}
             />
           </FormControl>
         </Grid>

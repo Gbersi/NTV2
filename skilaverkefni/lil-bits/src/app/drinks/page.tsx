@@ -1,4 +1,3 @@
-// src/app/drinks/page.tsx
 'use client'
 
 import React, { useEffect, useState, useContext, useMemo } from 'react'
@@ -25,41 +24,32 @@ interface RawDrink {
 }
 interface Drink extends RawDrink {
   price: number
+  qty?: number
 }
 
 export default function DrinksPage() {
   const { order, setOrder } = useContext(OrderContext)
   const router = useRouter()
 
- 
-  useEffect(() => {
-    if (!order.dish) {
-      router.replace('/dish')
-    }
-  }, [order.dish, router])
-
   const [categories, setCategories] = useState<string[]>([])
   const [activeCategory, setActiveCategory] = useState<string>('All')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchTerm, setSearchTerm] = useState<string>('')
   const [drinks, setDrinks] = useState<Drink[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState<boolean>(true)
   const [qtyMap, setQtyMap] = useState<Record<string, number>>({})
 
-
+  // 1) Load all categories
   useEffect(() => {
-    fetch(
-      'https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list'
-    )
-      .then((r) => r.json())
-      .then((data) => {
-        const cats = data.drinks.map(
-          (c: { strCategory: string }) => c.strCategory
-        )
+    fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list')
+      .then(res => res.json())
+      .then(data => {
+        const cats = data.drinks.map((c: { strCategory: string }) => c.strCategory)
         setCategories(['All', ...cats])
       })
       .catch(console.error)
   }, [])
 
+  // 2) Fetch drinks whenever category changes
   useEffect(() => {
     setLoading(true)
     const url =
@@ -70,18 +60,17 @@ export default function DrinksPage() {
           )}`
 
     fetch(url)
-      .then((r) => r.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         const list: Drink[] = data.drinks.slice(0, 12).map((d: RawDrink) => ({
           ...d,
-        
           price: parseFloat((Math.random() * 8 + 2).toFixed(2)),
         }))
         setDrinks(list)
-        
-        setQtyMap((prev) => {
+        // ensure qtyMap has an entry for each
+        setQtyMap(prev => {
           const next = { ...prev }
-          list.forEach((d) => {
+          list.forEach(d => {
             if (next[d.idDrink] == null) next[d.idDrink] = 0
           })
           return next
@@ -91,43 +80,38 @@ export default function DrinksPage() {
       .finally(() => setLoading(false))
   }, [activeCategory])
 
-
+  // 3) Search/filter
   const filtered = useMemo(() => {
     if (!searchTerm) return drinks
     const t = searchTerm.toLowerCase()
-    return drinks.filter((d) =>
-      d.strDrink.toLowerCase().includes(t)
-    )
+    return drinks.filter(d => d.strDrink.toLowerCase().includes(t))
   }, [searchTerm, drinks])
 
-  const adjustQty = (id: string, delta: number) =>
-    setQtyMap((prev) => {
-      const cur = prev[id] || 0
-      return { ...prev, [id]: Math.max(0, cur + delta) }
+  // Adjust quantity for a given drink
+  const adjustQty = (id: string, delta: number) => {
+    setQtyMap(prev => {
+      const next = { ...prev }
+      next[id] = Math.max(0, (next[id] || 0) + delta)
+      return next
     })
+  }
 
+  // Confirm and navigate
   const handleConfirm = () => {
-  
-    const picked = drinks
-      .filter((d) => (qtyMap[d.idDrink] || 0) > 0)
-      .map((d) => ({
+    const picked = drinks.filter(d => (qtyMap[d.idDrink] || 0) > 0)
+    setOrder({
+      ...order,
+      drinks: picked.map(d => ({
         id: d.idDrink,
         name: d.strDrink,
+        description: '',
         imageSource: d.strDrinkThumb,
         price: d.price,
-        qty: qtyMap[d.idDrink] || 0,
-        description: '',
+        qty: qtyMap[d.idDrink]!,
         category: 'Drink',
         brewer: '',
-      }))
-
-    // merge into order context
-    setOrder({
-      ...order,   // keeps order.dish
-      drinks: picked,
+      })),
     })
-
-    // navigate to /order
     router.push('/order')
   }
 
@@ -145,10 +129,10 @@ export default function DrinksPage() {
       >
         <Select
           value={activeCategory}
-          onChange={(_, v) => setActiveCategory(v!)}
+          onChange={(e, v) => setActiveCategory(v!)}
           sx={{ minWidth: 160 }}
         >
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <Option key={cat} value={cat}>
               {cat}
             </Option>
@@ -156,16 +140,16 @@ export default function DrinksPage() {
         </Select>
 
         <Input
-          placeholder="Search drinks…"
+          placeholder="Search drinks..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={e => setSearchTerm(e.target.value)}
           sx={{ flex: 1, minWidth: 300 }}
         />
 
         <Button
           variant="solid"
           onClick={handleConfirm}
-          disabled={!Object.values(qtyMap).some((n) => n > 0)}
+          disabled={!Object.values(qtyMap).some(n => n > 0)}
           sx={{
             backgroundColor: 'var(--color-secondary)',
             '&:hover': { backgroundColor: 'var(--color-accent)' },
@@ -176,16 +160,13 @@ export default function DrinksPage() {
       </Box>
 
       {/* Loading */}
-      {loading && (
+      {loading ? (
         <Box sx={{ textAlign: 'center', mt: 8 }}>
           <CircularProgress />
         </Box>
-      )}
-
-      {/* Grid */}
-      {!loading && (
+      ) : (
         <Grid container spacing={3} justifyContent="center">
-          {filtered.map((d) => {
+          {filtered.map(d => {
             const q = qtyMap[d.idDrink] || 0
             return (
               <Grid key={d.idDrink} xs="auto">
@@ -203,7 +184,7 @@ export default function DrinksPage() {
                     },
                   }}
                 >
-                  {/* price badge */}
+                  {/* Price badge */}
                   <Box
                     sx={{
                       position: 'absolute',
@@ -212,14 +193,14 @@ export default function DrinksPage() {
                       bgcolor: 'rgba(0,0,0,0.6)',
                       color: '#fff',
                       px: 1,
-                      borderRadius: 1,
+                      borderRadius: '4px',
                       fontSize: 12,
                     }}
                   >
                     ${d.price.toFixed(2)}
                   </Box>
 
-                  {/* image */}
+                  {/* Image */}
                   <Box
                     component="img"
                     src={d.strDrinkThumb}
@@ -232,7 +213,7 @@ export default function DrinksPage() {
                     }}
                   />
 
-                  {/* name */}
+                  {/* Name */}
                   <Box
                     sx={{
                       mt: 1,
@@ -247,7 +228,7 @@ export default function DrinksPage() {
                     {d.strDrink}
                   </Box>
 
-                  {/* qty controls */}
+                  {/* Qty controls */}
                   <Box
                     sx={{
                       display: 'flex',
@@ -264,13 +245,8 @@ export default function DrinksPage() {
                     >
                       <RemoveIcon fontSize="small" />
                     </IconButton>
-                    <Box sx={{ minWidth: 24, textAlign: 'center' }}>
-                      {q}
-                    </Box>
-                    <IconButton
-                      size="sm"
-                      onClick={() => adjustQty(d.idDrink, +1)}
-                    >
+                    <Box sx={{ minWidth: 24, textAlign: 'center' }}>{q}</Box>
+                    <IconButton size="sm" onClick={() => adjustQty(d.idDrink, +1)}>
                       <AddIcon fontSize="small" />
                     </IconButton>
                   </Box>
@@ -281,5 +257,5 @@ export default function DrinksPage() {
         </Grid>
       )}
     </Box>
-  )
+)
 }
