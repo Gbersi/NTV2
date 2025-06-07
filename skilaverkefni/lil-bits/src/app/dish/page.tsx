@@ -1,164 +1,138 @@
 // src/app/dish/page.tsx
-'use client'
+'use client';
 
-import React, { useEffect, useState, useContext } from 'react'
-import { useRouter } from 'next/navigation'
-import {
-  Box,
-  Card,
-  Typography,
-  Button,
-  CircularProgress,
-} from '@mui/joy'
-import { OrderContext } from 'context/OrderContext'
+import React, { useState, useEffect, useContext } from 'react';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import styles from '../../styles/DishCard.module.css'; // <-- adjusted path
+import { OrderContext } from '../../context/OrderContext';
 
-interface Meal {
-  idMeal: string
-  strMeal: string
-  strMealThumb: string
+interface ApiMeal {
+  idMeal: string;
+  strMeal: string;
+  strCategory: string;
+  strMealThumb: string;
+}
+
+interface Dish {
+  id: string;
+  name: string;
+  category: string;
+  imageSource: string;
+  price: number;
 }
 
 export default function DishPage() {
-  const router = useRouter()
-  const { order, setOrder } = useContext(OrderContext)
+  const { order, setOrder } = useContext(OrderContext);
+  const router = useRouter();
 
-  const [meal, setMeal] = useState<Meal | null>(null)
-  const [price, setPrice] = useState<number>(0)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [dish, setDish] = useState<Dish | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
- 
-  const loadMeal = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await fetch('https://www.themealdb.com/api/json/v1/1/random.php')
-      const data = await res.json()
-      const m = data.meals[0] as Meal
-      setMeal(m)
-      setPrice(parseFloat((Math.random() * 8 + 2).toFixed(2))) 
-    } catch (err) {
-      console.error(err)
-      setError('Failed to fetch a meal. Please try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
+  // Fetch a random dish on mount
   useEffect(() => {
-    loadMeal()
-  }, [])
+    fetchRandomDish();
+  }, []);
 
-  const handleNext = () => {
-    if (!meal) return
-    setOrder({
-      ...order,
-      dish: {
-        id: meal.idMeal,
-        name: meal.strMeal,
-        imageSource: meal.strMealThumb,
-        price,
-        category: '',
-        cuisine: '',
-        description: '',
-      },
-    })
-    router.push('/drinks')
+  function fetchRandomDish() {
+    setLoading(true);
+    fetch('https://www.themealdb.com/api/json/v1/1/random.php')
+      .then((r) => r.json())
+      .then((data) => {
+        const m: ApiMeal = data.meals[0];
+        setDish({
+          id: m.idMeal,
+          name: m.strMeal,
+          category: m.strCategory,
+          imageSource: m.strMealThumb,
+          price: parseFloat((Math.random() * 10 + 5).toFixed(2)),
+        });
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }
 
-  if (loading) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 6 }}>
-        <CircularProgress />
-      </Box>
-    )
-  }
-
-  if (error || !meal) {
-    return (
-      <Box sx={{ textAlign: 'center', mt: 6 }}>
-        <Typography level="h4" color="danger">
-          {error ?? 'No meal found.'}
-        </Typography>
-        <Button sx={{ mt: 2 }} onClick={loadMeal}>
-          Try Again
-        </Button>
-      </Box>
-    )
-  }
+  const handleSelect = () => {
+    if (!dish) return;
+    setOrder({ ...order, dish });
+    router.push('/drinks');
+  };
 
   return (
-    <Box sx={{ p: 4, display: 'flex', justifyContent: 'center' }}>
-      <Card
-        variant="outlined"
-        sx={{
-          maxWidth: 600,
-          width: '100%',
-          p: 3,
-          textAlign: 'center',
-          position: 'relative',
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <main
+        style={{
+          flex: 1,
+          padding: '32px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
-      
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 16,
-            right: 16,
-            bgcolor: 'rgba(0,0,0,0.7)',
-            color: '#fff',
-            px: 1.5,
-            py: 0.5,
-            borderRadius: '4px',
-            fontWeight: 'bold',
-            fontSize: '1rem',
-          }}
-        >
-          ${price.toFixed(2)}
-        </Box>
+        {loading || !dish ? (
+          <div className={styles.card}>
+            <div className={styles.image} style={{ backgroundColor: '#f0f0f0' }} />
+            <div className={styles.content}>
+              <h2 className={styles.title}>Loading…</h2>
+              <p className={styles.meta}>Please wait while we fetch a dish.</p>
+            </div>
+          </div>
+        ) : (
+          <div className={styles.card}>
+            <div className={styles.image}>
+              <Image
+                src={dish.imageSource}
+                alt={dish.name}
+                layout="fill"
+                objectFit="cover"
+                quality={80}
+                placeholder="blur"
+                blurDataURL="/images/placeholder.png"
+              />
+            </div>
+            <div className={styles.content}>
+              <h2 className={styles.title}>{dish.name}</h2>
+              <p className={styles.meta}>{dish.category}</p>
+              <div className={styles.priceCalories}>
+                <span>${dish.price.toFixed(2)}</span>
+                {/* Add calories or other info here if desired */}
+              </div>
+              <div className={styles.buttonRow}>
+                <button className={styles.button} onClick={fetchRandomDish}>
+                  Pick Another Dish
+                </button>
+                <button className={styles.button} onClick={handleSelect}>
+                  Select Dish
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </main>
 
-        <Typography level="h2" sx={{ mb: 2 }}>
-          Your Random Dish
-        </Typography>
+      {/* Sidebar Order Summary (placeholder) */}
+      <aside
+        style={{
+          width: '300px',
+          borderLeft: '1px solid var(--border-light)',
+          padding: '32px',
+          background: 'rgba(255,255,255,0.9)',
+          position: 'sticky',
+          top: '80px',
+          height: 'calc(100vh - 80px)',
+          overflowY: 'auto',
+        }}
+      >
+        {/* Replace with <OrderSummary /> if you have it */}
+        <p style={{ fontFamily: 'Inter, sans-serif', color: '#777777' }}>
+          Your current order will appear here.
+        </p>
+      </aside>
+    </div>
+  );
+}
 
-        <Box
-          component="img"
-          src={meal.strMealThumb}
-          alt={meal.strMeal}
-          sx={{
-            width: '100%',
-            height: 200,
-            objectFit: 'cover',
-            borderRadius: 2,
-            mb: 2,
-          }}
-        />
-
-        <Typography level="h4" sx={{ mb: 3 }}>
-          {meal.strMeal}
-        </Typography>
-
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center' }}>
-          <Button
-            variant="outlined"
-            onClick={loadMeal}
-            sx={{ flex: 1 }}
-          >
-            Generate New Dish
-          </Button>
-          <Button
-            variant="solid"
-            onClick={handleNext}
-            sx={{
-              flex: 1,
-              backgroundColor: 'var(--color-secondary)',
-              '&:hover': { backgroundColor: 'var(--color-accent)' },
-            }}
-          >
-            Next: Choose Drinks
-          </Button>
-        </Box>
-      </Card>
-    </Box>
-  )
+// Helper to re‐fetch another random dish
+async function fetchRandomDish() {
+  // Implementation is in the component above
 }

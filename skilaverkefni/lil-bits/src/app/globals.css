@@ -1,28 +1,262 @@
-/* src/app/globals.css */
+/* src/styles/globals.css */
+
 :root {
   --color-primary:   #3E6053;
   --color-secondary: #C16757;
   --color-accent:    #BA2329;
-
-
-  --bg-image: url('/images/lilbits-landingpage.png');
+  --bg-light:        #FFFFFF;
+  --border-light:    #E0E0E0;
+  --text-dark:       #333333;
+  --text-muted:      #777777;
+  --shadow-light:    rgba(0,0,0,0.05);
+  --shadow-hover:    rgba(0,0,0,0.15);
+  --radius:          8px;
+  --spacing:         16px;
+  --font-body:       'Inter', sans-serif;
+  --font-heading:    'Playfair Display', serif;
 }
 
-html, body, #__next, main {
+/* Reset */
+html, body, #__next {
   height: 100%;
   margin: 0;
+  font-family: var(--font-body);
+  background: var(--bg-light);
+  color: var(--text-dark);
+  line-height: 1.5;
 }
 
-body {
-  background-image: var(--bg-image);
-  background-repeat:   no-repeat;
-  background-size:     cover;
-  background-position: center;
-  background-attachment: fixed;
+/* Utility Classes */
+.hidden { display: none !important; }
+
+/* Page container with generous padding */
+.page {
   display: flex;
   flex-direction: column;
+  gap: calc(var(--spacing) * 2);
+  padding: calc(var(--spacing) * 1.5);
 }
 
-main {
-  flex: 1 0 auto;
+/* Top row for homepage layout */
+.topRow {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--spacing);
+}
+
+@media (max-width: 900px) {
+  .topRow {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Carousel box */
+.carouselBox {
+  background: var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+/* Order box (homepage) */
+.orderBox {
+  background: var(--bg-light);
+  border: 2px solid var(--color-secondary);
+  border-radius: var(--radius);
+  padding: calc(var(--spacing) * 1.5) var(--spacing);
+  text-align: center;
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.orderBox h2 {
+  margin: 0 0 var(--spacing);
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  color: var(--color-primary);
+  letter-spacing: 0.5px;
+}
+
+.newOrderForm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.orderInput {
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+  font-family: var(--font-body);
+  padding: 0.75rem;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orderInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(62,96,83,0.2);
+  outline: none;
+}
+
+.startError {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Homepage bottom row */
+.bottomRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing);
+}
+
+@media (max-width: 900px) {
+  .bottomRow {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.findBox,
+.aboutBox {
+  background: var(--bg-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: calc(var(--spacing) * 1.25);
+}
+
+.findBox h3,
+.aboutBox h3 {
+  margin-top: 0;
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  letter-spacing: 0.5px;
+}
+
+.findForm {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.findInput {
+  flex: 1;
+  font-family: var(--font-body);
+  padding: 0.5rem;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.findInput:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(62,96,83,0.2);
+  outline: none;
+}
+
+.findBox button {
+  padding: 0.5rem 1rem;
+  font-family: var(--font-body);
+  background: var(--color-secondary);
+  color: var(--bg-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.findBox button:hover {
+  background: #A14E45;
+  transform: scale(1.02);
+}
+
+.findMessage {
+  color: var(--color-accent);
+  font-size: 0.9rem;
+}
+
+.aboutBox p {
+  margin-top: 0.5rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.loading {
+  padding: calc(var(--spacing) * 2);
+  text-align: center;
+  color: #666;
+}
+
+/* Order page container */
+.container {
+  max-width: 600px;
+  margin: calc(var(--spacing) * 2) auto;
+  padding: var(--spacing);
+  font-family: var(--font-body);
+}
+
+/* Receipt/details section */
+.details {
+  background: var(--bg-light);
+  padding: var(--spacing);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.details > div {
+  margin-bottom: 0.75rem;
+  font-family: var(--font-body);
+}
+
+.total {
+  font-weight: bold;
+  margin-top: 0.75rem;
+  font-family: var(--font-heading);
+}
+
+.meta {
+  margin-top: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+/* Action buttons in Receipt page */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: calc(var(--spacing) * 1.5);
+}
+
+.homeButton,
+.editButton {
+  padding: 0.75rem 1.5rem;
+  color: var(--bg-light);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.homeButton {
+  background: var(--color-accent);
+}
+
+.editButton {
+  background: var(--color-secondary);
+}
+
+.homeButton:hover {
+  background: #9e1e25;
+  transform: scale(1.02);
+}
+
+.editButton:hover {
+  background: #a14e45;
+  transform: scale(1.02);
 }

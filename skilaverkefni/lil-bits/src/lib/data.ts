@@ -5,7 +5,8 @@ const orders: Order[] = [];
 let nextId = 1;
 
 export function addOrder(o: Order): Order {
-  o.id = nextId++;
+  o.id = nextId.toString();
+  nextId++;
   orders.push(o);
   return o;
 }

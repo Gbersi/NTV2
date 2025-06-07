@@ -1,4 +1,7 @@
 import React, { useContext } from 'react'
+import { Box } from '@mui/joy'
+import Typography from '@mui/joy/Typography'
+import Divider from '@mui/joy/Divider'
 import { OrderContext } from '../context/OrderContext'
 
 interface SummaryItem {
@@ -10,7 +13,6 @@ interface SummaryItem {
 export default function OrderSummary() {
   const { order } = useContext(OrderContext)
 
- 
   const items: SummaryItem[] = []
 
   if (order.dish) {
@@ -31,24 +33,25 @@ export default function OrderSummary() {
     })
   }
 
- 
   const total: number = items.reduce(
     (sum: number, d: SummaryItem) => sum + d.price * d.qty,
     0
   )
 
   return (
-    <div style={{ padding: 16 }}>
-      <h3>Your Order</h3>
+    <Box sx={{ padding: 16, borderLeft: '1px solid var(--color-border)' }}>
+      <Typography sx={{ fontSize: '1.25rem', mb: 1 }}>Your Order</Typography>
       {items.map((d: SummaryItem, idx: number) => (
-        <div key={idx} style={{ marginBottom: 8 }}>
-          {d.name} × {d.qty} = ${ (d.price * d.qty).toFixed(2) }
-        </div>
+        <Box key={idx} sx={{ marginBottom: 1 }}>
+          <Typography sx={{ fontSize: '1rem' }}>
+            {d.name} × {d.qty} = ${ (d.price * d.qty).toFixed(2) }
+          </Typography>
+        </Box>
       ))}
-      <hr />
-      <div style={{ fontWeight: 'bold', marginTop: 8 }}>
+      <Divider sx={{ my: 1 }} />
+      <Typography sx={{ fontWeight: 'bold', mt: 1 }}>
         Total: ${total.toFixed(2)}
-      </div>
-    </div>
+      </Typography>
+    </Box>
   )
 }

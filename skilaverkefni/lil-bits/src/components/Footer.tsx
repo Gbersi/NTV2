@@ -21,16 +21,16 @@ export default function Footer() {
         gap: 2,
         alignItems: 'center',
         boxShadow: '0 -1px 4px rgba(0,0,0,0.1)',
-        fontSize: '0.8125rem',
       }}
     >
-      <Typography component="span" sx={{ cursor: 'pointer', textDecoration: 'underline' }}>
+      {/* We no longer supply level="body2"; instead rely on default or custom fontSize */}
+      <Typography sx={{ fontSize: '0.875rem', cursor: 'pointer', textDecoration: 'underline' }}>
         Privacy Policy
       </Typography>
-      <Typography component="span" sx={{ cursor: 'pointer', textDecoration: 'underline' }}>
+      <Typography sx={{ fontSize: '0.875rem', cursor: 'pointer', textDecoration: 'underline' }}>
         Terms
       </Typography>
-      <Typography component="span">© 2025 Lil Bits Inc.</Typography>
+      <Typography sx={{ fontSize: '0.875rem' }}>© 2025 Lil Bits Inc.</Typography>
     </Box>
   )
 }

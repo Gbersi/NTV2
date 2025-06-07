@@ -1,95 +1,115 @@
 // src/components/TopMenu.tsx
-'use client'
+'use client';
 
-import React from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import Box from '@mui/joy/Box'
-import Image from 'next/image'
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+const menuItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Dish', href: '/dish' },
+  { label: 'Drinks', href: '/drinks' },
+  { label: 'Order', href: '/order' },
+  { label: 'Receipt', href: '/receipt' },
+];
 
 export default function TopMenu() {
-  const pathname = usePathname() || '/'
+  // This flag ensures we only render on the client side
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const leftLinks = [{ label: 'Home', href: '/' }]
-  const rightLinks = [
-    { label: 'Dishes', href: '/dish' },
-    { label: 'Drinks', href: '/drinks' },
-    { label: 'Order', href: '/order' },
-    { label: 'Receipt', href: '/receipt' },
-  ]
+  const pathname = usePathname() || '/';
+
+  if (!mounted) {
+    // On the server, render nothing to avoid any style‐injection mismatch
+    return null;
+  }
+
+  // Inline styles using your three-color theme
+  const navStyle: React.CSSProperties = {
+    position: 'sticky',
+    top: 0,
+    zIndex: 1000,
+    backgroundColor: '#3E6053', // primary
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '12px 24px',
+  };
+
+  const logoStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+  };
+
+  const titleStyle: React.CSSProperties = {
+    color: 'white',
+    fontFamily: '"Playfair Display", serif',
+    fontSize: '1.5rem',
+    margin: 0,
+  };
+
+  const ulStyle: React.CSSProperties = {
+    listStyle: 'none',
+    display: 'flex',
+    gap: '24px',
+    margin: 0,
+    padding: 0,
+  };
+
+  const linkStyleBase: React.CSSProperties = {
+    textDecoration: 'none',
+    fontFamily: 'Inter, sans-serif',
+    fontSize: '1.125rem',
+    transition: 'color 0.2s, letterSpacing 0.2s',
+  };
+
+  const linkActiveStyle: React.CSSProperties = {
+    color: '#C16757', // secondary accent
+    letterSpacing: '0.5px',
+    fontWeight: 600,
+  };
+
+  const linkInactiveStyle: React.CSSProperties = {
+    color: '#FFFFFF',
+    opacity: 0.9,
+  };
 
   return (
-    <Box
-      component="nav"
-      sx={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        px: 4,
-        py: 1,
-        backgroundColor: 'transparent',
-      }}
-    >
-      {/* Left: Home + “Lil Bits” */}
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-        {leftLinks.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            style={{
-              textDecoration: 'none',
-              color:
-                pathname === l.href ? 'var(--color-secondary)' : '#fff',
-              fontSize: '1.1rem',
-            }}
-          >
-            {l.label}
-          </Link>
-        ))}
-        <Box
-          component="span"
-          sx={{
-            color: '#fff',
-            fontSize: '1.2rem',
-            fontWeight: 'bold',
-          }}
-        >
-          Lil Bits
-        </Box>
-      </Box>
-
-      {/* Center: Logo */}
-      <Box>
-        <Image
+    <nav style={navStyle}>
+      {/* Logo + Title */}
+      <div style={logoStyle}>
+        <img
           src="/lil-bits-logo.png"
           alt="Lil Bits Logo"
-          width={48}
-          height={48}
+          width={40}
+          height={40}
         />
-      </Box>
+        <h1 style={titleStyle}>Gourmet Random</h1>
+      </div>
 
-      {/* Right: other menu items */}
-      <Box sx={{ display: 'flex', gap: 3 }}>
-        {rightLinks.map((l) => (
-          <Link
-            key={l.href}
-            href={l.href}
-            style={{
-              textDecoration: 'none',
-              color:
-                pathname === l.href
-                  ? 'var(--color-secondary)'
-                  : '#fff',
-              fontSize: '1.1rem',
-            }}
-          >
-            {l.label}
-          </Link>
-        ))}
-      </Box>
-    </Box>
-  )
+      {/* Menu Items */}
+      <ul style={ulStyle}>
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <li key={item.href}>
+              <Link
+                href={item.href}
+                style={{
+                  ...linkStyleBase,
+                  ...(isActive ? linkActiveStyle : linkInactiveStyle),
+                }}
+              >
+                {item.label}
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
 }

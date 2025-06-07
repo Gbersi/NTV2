@@ -1,16 +1,21 @@
 // src/app/layout.tsx
-import './globals.css'
-import React, { ReactNode } from 'react'
-import Providers from './providers'
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+import React from 'react';
+import ClientSideWrapper from '../components/ClientSideWrapper';
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
-      <head />
       <body>
-        {/* everything inside <Providers> is client‐side */}
-        <Providers>{children}</Providers>
+        {/* Everything inside ClientSideWrapper is client-only */}
+        <ClientSideWrapper>
+          {children}
+        </ClientSideWrapper>
       </body>
     </html>
-  )
+  );
 }

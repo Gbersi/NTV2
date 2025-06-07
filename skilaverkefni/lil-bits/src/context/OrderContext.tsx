@@ -1,4 +1,5 @@
 // src/context/OrderContext.tsx
+
 'use client';
 
 import React, {
@@ -31,3 +32,5 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     </OrderContext.Provider>
   );
 }
+OrderProvider.displayName = 'OrderProvider';
+OrderContext.displayName = 'OrderContext';

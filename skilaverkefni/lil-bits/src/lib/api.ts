@@ -66,11 +66,9 @@ export async function fetchRandomDish(): Promise<Dish> {
   return {
     id: meal.idMeal,
     name: meal.strMeal,
-    description: meal.strInstructions,
     imageSource: meal.strMealThumb,
     price,
     category: meal.strCategory,
-    cousine: meal.strArea,
     calories,
   };
 }
