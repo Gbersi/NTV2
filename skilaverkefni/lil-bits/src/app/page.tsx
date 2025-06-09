@@ -1,78 +1,63 @@
-// src/app/page.tsx
 'use client';
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import Box from '@mui/joy/Box';
-import Button from '@mui/joy/Button';
-import Typography from '@mui/joy/Typography';
-import Input from '@mui/joy/Input';
-import Divider from '@mui/joy/Divider';
+import Image from 'next/image';
+import { Box, Button, Input, Typography } from '@mui/joy';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+
 import { OrderContext } from '../context/OrderContext';
 import { fetchOrderByEmail } from '../lib/api';
 
 export default function HomePage() {
   const router = useRouter();
-  const { order, setOrder } = useContext(OrderContext);
+  const { setOrder } = useContext(OrderContext);
 
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [slides, setSlides] = useState<string[]>([]);
   const [loadingSlides, setLoadingSlides] = useState(true);
 
-  const [emailInput, setEmailInput] = useState<string>('');
-  const [error, setError] = useState<string | null>(null);
-  const [loadingCheck, setLoadingCheck] = useState(false);
-
-  // On mount: load 3 random food images for the hero carousel
-  React.useEffect(() => {
-    async function loadRandomImages() {
-      try {
-        const imgs: string[] = [];
-        for (let i = 0; i < 3; i++) {
-          const res = await fetch('https://themealdb.com/api/json/v1/1/random.php');
-          const data = await res.json();
-          imgs.push(data.meals[0].strMealThumb as string);
-        }
-        setSlides(imgs);
-      } catch {
-        // If carousel fails, silently ignore
-      } finally {
-        setLoadingSlides(false);
+  useEffect(() => {
+    (async function loadSlides() {
+      const imgs: string[] = [];
+      for (let i = 0; i < 5; i++) {
+        try {
+          const r = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+          const d = await r.json();
+          imgs.push(d.meals[0].strMealThumb);
+        } catch {}
       }
-    }
-    loadRandomImages();
+      setSlides(imgs);
+      setLoadingSlides(false);
+    })();
   }, []);
 
-  // Handle email submit
-  const handleEmailSubmit = async () => {
+  const startNew = () => {
+    setOrder({});
+    router.push('/dish');
+  };
+
+  const resume = async () => {
     setError(null);
-    const email = emailInput.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError('Please enter a valid email address.');
+      setError('Please enter a valid email.');
       return;
     }
-
-    setLoadingCheck(true);
     try {
-      const response = await fetchOrderByEmail(email);
-      if (response.success && response.order) {
-        // Found an existing order → preload into context and navigate to receipt
-        setOrder(response.order);
-        router.push('/receipt');
-      } else {
-        // No existing order (404) → start a new one
-        setOrder({ email, people: 1, dish: undefined, drinks: [] });
-        router.push('/dish');
+      const resp = await fetchOrderByEmail(email.trim().toLowerCase());
+      if (!resp.success || !resp.order) {
+        setError('No order found for that email.');
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setError('An error occurred while checking your email. Please try again.');
-    } finally {
-      setLoadingCheck(false);
+      setOrder(resp.order);
+      router.push('/receipt');
+    } catch {
+      setError('Error checking order. Try again.');
     }
   };
 
@@ -80,135 +65,132 @@ export default function HomePage() {
     <Box
       component="main"
       sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        textAlign: 'center',
+        color: '#fff',
+        pt: 1,
+        pb: { xs: 4, md: 6 },
         px: 2,
-        py: 4,
-        minHeight: '100vh',
-        background: 'var(--bg-light)',
+        backgroundColor: 'rgba(0,0,0,0.3)',
       }}
     >
-      {/* ===== Hero Carousel ===== */}
-      <Box
+      <Box sx={{ mx: 'auto', width: 240, height: 240, position: 'relative' }}>
+        <Image
+          src="/lil-bits-logo.png"
+          alt="Lil Bits Logo"
+          fill
+          style={{ objectFit: 'contain' }}
+        />
+      </Box>
+
+      <Typography
+        component="h1"
+        level="h2"
         sx={{
-          width: '100%',
-          maxWidth: 1200,
-          mb: 6,
+          mt: { xs: 0.5, md: 1 },
+          fontFamily: '"Libre Baskerville", serif',
+          fontSize: { xs: '2rem', md: '3rem' },
+          letterSpacing: 1.2,
         }}
       >
-        {loadingSlides ? (
-          <Box
-            sx={{
-              height: 300,
-              bgcolor: 'var(--border-light)',
-              borderRadius: 2,
-              animation: 'pulse 1.5s infinite',
-            }}
-          />
-        ) : (
+        Welcome to Lil Bits
+      </Typography>
+      <Typography
+        level="body-lg"
+        sx={{
+          mt: { xs: 0.25, md: 0.5 },
+          fontSize: { xs: '1rem', md: '1.25rem' },
+          maxWidth: 600,
+          mx: 'auto',
+        }}
+      >
+        Enjoy our bite-sized meals and incredible cocktail selection.
+      </Typography>
+
+      <Box
+        sx={{
+          mt: { xs: 2, md: 3 },
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 2,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          onClick={startNew}
+          sx={{
+            minWidth: 180,
+            backgroundColor: '#3E6053',
+            '&:hover': { backgroundColor: '#C16757' },
+          }}
+        >
+          Start New Order
+        </Button>
+
+        <Box sx={{ textAlign: 'left' }}>
+          <Typography level="body-sm" sx={{ mb: 1, color: '#ccc' }}>
+            Have an existing order? Resume by email:
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Input
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={{ flex: 1 }}
+            />
+            <Button
+              onClick={resume}
+              variant="outlined"
+              sx={{
+                borderColor: '#3E6053',
+                color: '#3E6053',
+                '&:hover': { backgroundColor: 'rgba(62,96,83,0.1)' },
+              }}
+            >
+              Resume
+            </Button>
+          </Box>
+          {error && (
+            <Typography color="danger" level="body-sm" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+
+      {!loadingSlides && slides.length > 0 && (
+        <Box sx={{ py: 6, px: 2 }}>
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
             spaceBetween={20}
             slidesPerView={1}
+            breakpoints={{
+              600: { slidesPerView: 2 },
+              900: { slidesPerView: 3 },
+            }}
             navigation
             pagination={{ clickable: true }}
-            autoplay={{ delay: 3000 }}
+            autoplay={{ delay: 3000, pauseOnMouseEnter: true }}
             loop
-            style={{ borderRadius: 12, overflow: 'hidden' }}
           >
-            {slides.map((url, idx) => (
-              <SwiperSlide key={idx}>
+            {slides.map((url, i) => (
+              <SwiperSlide key={i}>
                 <Box
                   component="img"
                   src={url}
-                  alt={`slide ${idx + 1}`}
+                  alt={`Slide ${i + 1}`}
                   sx={{
                     width: '100%',
-                    height: 300,
+                    height: { xs: 200, sm: 250, md: 300 },
                     objectFit: 'cover',
+                    borderRadius: 2,
                   }}
                 />
               </SwiperSlide>
             ))}
           </Swiper>
-        )}
-      </Box>
-
-      {/* ===== Welcome & Resume Section ===== */}
-      <Box
-        sx={{
-          width: '100%',
-          maxWidth: 500,
-          textAlign: 'center',
-        }}
-      >
-        <Typography
-          component="h1"
-          sx={{
-            fontSize: '2.5rem',
-            fontFamily: '“Playfair Display”, serif',
-            letterSpacing: '1px',
-            mb: 1,
-            color: 'var(--color-primary)',
-          }}
-        >
-          Welcome to Gourmet Random
-        </Typography>
-        <Typography
-          sx={{
-            fontSize: '1.1rem',
-            fontFamily: 'var(--font-body)',
-            mb: 2,
-            color: '#555',
-          }}
-        >
-          Let us surprise you with a perfect meal-and-drink pairing.
-        </Typography>
-
-        <Divider sx={{ mb: 3 }} />
-
-        <Typography
-          sx={{
-            mb: 1,
-            fontSize: '1rem',
-            fontFamily: 'var(--font-body)',
-          }}
-        >
-          Have an existing order? Enter your email to resume:
-        </Typography>
-        <Box sx={{ position: 'relative', mb: error ? 1 : 3 }}>
-          <Input
-            placeholder="your.email@example.com"
-            size="lg"
-            value={emailInput}
-            onChange={(e) => setEmailInput(e.target.value)}
-            sx={{
-              width: '100%',
-              fontFamily: 'var(--font-body)',
-            }}
-          />
         </Box>
-        {error && (
-          <Typography color="danger" sx={{ mb: 2, fontFamily: 'var(--font-body)' }}>
-            {error}
-          </Typography>
-        )}
-        <Button
-          variant="solid"
-          size="lg"
-          onClick={handleEmailSubmit}
-          disabled={loadingCheck}
-          sx={{
-            backgroundColor: 'var(--color-secondary)',
-            fontFamily: 'var(--font-body)',
-            '&:hover': { backgroundColor: 'var(--color-accent)' },
-            width: '100%',
-          }}
-        >
-          {loadingCheck ? 'Checking…' : 'Resume / Start Order'}
-        </Button>
-      </Box>
+      )}
     </Box>
   );
 }

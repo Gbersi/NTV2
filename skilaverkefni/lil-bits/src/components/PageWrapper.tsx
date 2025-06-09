@@ -1,11 +1,11 @@
-'use client'
+// src/components/PageWrapper.tsx
+'use client';
 
-import { motion, AnimatePresence } from 'framer-motion'
-import { usePathname } from 'next/navigation'
+import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function PageWrapper({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-
+  const pathname = usePathname();
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -18,5 +18,5 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         {children}
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

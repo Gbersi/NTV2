@@ -1,4 +1,3 @@
-// src/app/drinks/page.tsx
 'use client';
 
 import React, {
@@ -13,17 +12,17 @@ import {
   Box,
   Button,
   Card,
-  Grid,
   IconButton,
   Select,
   Option,
   Input,
-  Divider,
   Typography,
+  Divider,
 } from '@mui/joy';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import OrderSummary from '../../components/OrderSummary';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { OrderContext } from '../../context/OrderContext';
 
 interface RawDrink {
@@ -36,17 +35,6 @@ interface Drink extends RawDrink {
   price: number;
 }
 
-interface OrderItem {
-  id: string;
-  name: string;
-  description: string;
-  imageSource: string;
-  price: number;
-  qty: number;
-  category: string;
-  brewer: string;
-}
-
 export default function DrinksPage() {
   const { order, setOrder } = useContext(OrderContext);
   const router = useRouter();
@@ -57,32 +45,43 @@ export default function DrinksPage() {
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  /**
-   * qtyMap holds quantities for EVERY drink ID the user has ever seen/selected.
-   * We seed it from order.drinks on first render, then on every new category we add missing keys
-   * but never wipe existing ones. Each time qtyMap changes, we immediately merge into context
-   * so the sidebar (OrderSummary) shows live changes.
-   */
+  // track quantities by drink ID
   const [qtyMap, setQtyMap] = useState<Record<string, number>>(() => {
-    const initial: Record<string, number> = {};
-    (order.drinks || []).forEach((item) => {
-      initial[item.id] = item.qty;
+    const init: Record<string, number> = {};
+    (order.drinks ?? []).forEach((d) => {
+      init[d.id] = d.qty ?? 0;
     });
-    return initial;
+    return init;
   });
 
-  // 1) Load categories from TheCocktailDB
+  // sidebar collapsed state
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // compute subtotals & total
+  const { dishPrice, total } = useMemo(() => {
+    const guests = order.people ?? 1;
+    const dp = (order.dish?.price ?? 0) * guests;
+    const dt = (order.drinks ?? []).reduce(
+      (sum, d) => sum + (d.price ?? 0) * (d.qty ?? 0),
+      0
+    );
+    return { dishPrice: dp, total: dp + dt };
+  }, [order]);
+
+  // load categories
   useEffect(() => {
     fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list')
       .then((r) => r.json())
       .then((data) => {
-        const cats = data.drinks.map((c: { strCategory: string }) => c.strCategory);
+        const cats = Array.isArray(data.drinks)
+          ? data.drinks.map((c: any) => c.strCategory)
+          : [];
         setCategories(['All', ...cats]);
       })
       .catch(console.error);
   }, []);
 
-  // 2) Fetch drinks whenever activeCategory changes
+  // load drinks on category change
   useEffect(() => {
     setLoading(true);
     const url =
@@ -95,21 +94,20 @@ export default function DrinksPage() {
     fetch(url)
       .then((r) => r.json())
       .then((data) => {
-        const list: Drink[] = (data.drinks || [])
-          .slice(0, 12)
-          .map((d: RawDrink) => ({
-            ...d,
-            price: parseFloat((Math.random() * 8 + 2).toFixed(2)), // random $2–$10
-          }));
+        const raw: RawDrink[] = Array.isArray(data.drinks)
+          ? data.drinks
+          : [];
+        const list: Drink[] = raw.slice(0, 12).map((d) => ({
+          ...d,
+          price: parseFloat((Math.random() * 8 + 2).toFixed(2)),
+        }));
         setDrinks(list);
 
-        // Add missing IDs to qtyMap (but keep the old ones)
+        // seed qtyMap so every card has a count
         setQtyMap((prev) => {
           const next = { ...prev };
           list.forEach((d) => {
-            if (next[d.idDrink] == null) {
-              next[d.idDrink] = 0;
-            }
+            if (next[d.idDrink] == null) next[d.idDrink] = 0;
           });
           return next;
         });
@@ -118,312 +116,277 @@ export default function DrinksPage() {
       .finally(() => setLoading(false));
   }, [activeCategory]);
 
-  // 3) Filter drinks by searchTerm
+  // filter by search
   const filtered = useMemo(() => {
     if (!searchTerm) return drinks;
     const t = searchTerm.toLowerCase();
-    return drinks.filter((d) => d.strDrink.toLowerCase().includes(t));
+    return drinks.filter((d) =>
+      d.strDrink.toLowerCase().includes(t)
+    );
   }, [searchTerm, drinks]);
 
-  // Whenever qtyMap changes, immediately reflect it into order.drinks context
-  // so the right‐hand sidebar (OrderSummary) updates live.
-  useEffect(() => {
-    // Build a merged map: start from existing order.drinks
-    const merged: Record<string, OrderItem> = {};
-    (order.drinks || []).forEach((itm) => {
-      merged[itm.id] = { ...itm };
-    });
+  // update quantity
+  const handleQtyChange = (d: Drink, delta: number) => {
+    const id = d.idDrink;
+    const curr = qtyMap[id] ?? 0;
+    const nextQty = Math.max(0, curr + delta);
 
-    // For every key in qtyMap where qty > 0, either update or insert
-    Object.entries(qtyMap).forEach(([id, qty]) => {
-      if (qty > 0) {
-        // If we already have that item in order, update qty
-        if (merged[id]) {
-          merged[id].qty = qty;
-        } else {
-          // Else, find from the full drinks array (could be from a past category)
-          const foundInCurrent = drinks.find((d) => d.idDrink === id);
-          if (foundInCurrent) {
-            merged[id] = {
-              id: id,
-              name: foundInCurrent.strDrink,
-              description: '',
-              imageSource: foundInCurrent.strDrinkThumb,
-              price: foundInCurrent.price,
-              qty: qty,
-              category: activeCategory,
-              brewer: '',
-            };
-          } else {
-            // In rare case it’s from a previous category, look up by scanning all categories
-            // (We can’t fetch all categories’ arrays quickly here; if user changes categories, prev category’s list might not be in state.)
-            // As a simpler fallback, we’ll keep whatever’s already in merged (if any). Otherwise we ignore. 
-            // Practically, setOrder will reconcile on Confirm too.
-          }
-        }
-      } else {
-        // qty is 0 => remove from merged if it existed
-        if (merged[id]) {
-          delete merged[id];
-        }
+    setQtyMap((p) => ({ ...p, [id]: nextQty }));
+    setOrder((o) => {
+      const others = (o.drinks ?? []).filter((x) => x.id !== id);
+      if (nextQty > 0) {
+        others.push({
+          id,
+          name: d.strDrink,
+          description: '',
+          imageSource: d.strDrinkThumb,
+          price: d.price,
+          qty: nextQty,
+          category: activeCategory,
+          brewer: '',
+        });
       }
-    });
-
-    // Convert back to array
-    const mergedArray = Object.values(merged);
-    setOrder({ ...order, drinks: mergedArray });
-  }, [qtyMap]);
-
-  // Increase or decrease a given drink’s quantity
-  const adjustQty = (id: string, delta: number) => {
-    setQtyMap((prev) => {
-      const current = prev[id] || 0;
-      const nextQty = Math.max(0, current + delta);
-      return { ...prev, [id]: nextQty };
+      return { ...o, drinks: others };
     });
   };
 
-  // When user clicks Confirm, simply navigate to /order
-  // (The sidebar is already up‐to‐date because of the above effect.)
-  const handleConfirm = () => {
-    router.push('/order');
-  };
+  const goToOrder = () => router.push('/order');
 
   return (
-    <Box sx={{ display: 'flex', height: '100%' }}>
-      {/* ==== MAIN CONTENT ==== */}
-      <Box
-        sx={{
-          flex: 1,
-          p: 0,
-          pt: '80px', // space for the sticky bar
-          backgroundColor: 'transparent',
-          overflowY: 'auto',
-        }}
-      >
-        {/* ===== STICKY CATEGORY / SEARCH / CONFIRM BAR ===== */}
-        <Box
-          sx={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 2,
-            p: 2,
-            backgroundColor: 'rgba(255,255,255,0.95)',
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          {/* Category Select */}
+    <Box sx={{ display: 'flex' /* page scroll only */ }}>
+      {/* 1) Main content */}
+      <Box sx={{ flex: 1, p: 4 }}>
+        {/* filters + button */}
+        <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
           <Select
-            size="md"
             value={activeCategory}
-            onChange={(e, v) => setActiveCategory(v!)}
+            onChange={(_, v) => setActiveCategory(v!)}
             placeholder="Category"
-            sx={{
-              minWidth: 160,
-              fontFamily: 'var(--font-body)',
-            }}
+            sx={{ minWidth: 180 }}
           >
-            {categories.map((cat) => (
-              <Option key={cat} value={cat}>
-                {cat}
+            {categories.map((c) => (
+              <Option key={c} value={c}>
+                {c}
               </Option>
             ))}
           </Select>
 
-          {/* Search Input */}
           <Input
-            size="md"
-            placeholder="Search drinks..."
+            placeholder="Search drinks…"
             value={searchTerm}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(e.target.value)
             }
-            sx={{
-              flex: 1,
-              minWidth: 300,
-              fontFamily: 'var(--font-body)',
-            }}
+            sx={{ flex: 1, minWidth: 200 }}
           />
 
-          {/* Confirm Button */}
           <Button
-            size="md"
-            variant="solid"
-            onClick={handleConfirm}
-            disabled={!Object.values(qtyMap).some((n) => n > 0)}
+            onClick={goToOrder}
+            disabled={!((order.drinks ?? []).length > 0)}
             sx={{
-              backgroundColor: 'var(--color-secondary)',
-              fontFamily: 'var(--font-body)',
-              '&:hover': { backgroundColor: 'var(--color-accent)' },
+              backgroundColor: '#3E6053',
+              '&:hover': { backgroundColor: '#C16757' },
             }}
           >
-            Confirm Selection
+            Continue to Order
           </Button>
         </Box>
 
-        {/* ===== DRINK CARDS GRID ===== */}
-        {loading ? (
-          <Grid container spacing={2} sx={{ px: 2, mt: 2 }}>
-            {Array.from({ length: 6 }).map((_, idx) => (
-              <Grid key={idx} xs={12} sm={6} md={4} sx={{ mb: 2 }}>
-                <Box
-                  sx={{
-                    bgcolor: 'var(--border-light)',
-                    height: 260,
-                    borderRadius: 2,
-                    animation: 'pulse 1.5s infinite',
-                  }}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        ) : (
-          <Grid
-            container
-            spacing={3}
-            justifyContent="center"
-            sx={{ px: 2, mt: 2 }}
-          >
-            {filtered.map((d) => {
-              const q = qtyMap[d.idDrink] || 0;
-              return (
-                <Grid key={d.idDrink} xs={12} sm={6} md={4}>
-                  <Card
-                    variant="outlined"
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                      height: 300, // fixed height for uniform cards
-                      p: 1,
-                      position: 'relative',
-                      bgcolor: q > 0 ? '#f0f8f2' : 'var(--bg-light)',
-                      transition: 'transform .2s, box-shadow .2s',
-                      fontFamily: 'var(--font-body)',
-                      '&:hover': {
-                        transform: 'translateY(-4px) scale(1.02)',
-                        boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
-                      },
-                    }}
-                  >
-                    {/* Price badge */}
-                    <Box
-                      sx={{
-                        position: 'absolute',
-                        top: 8,
-                        right: 8,
-                        bgcolor: 'var(--color-primary)',
-                        color: '#fff',
-                        px: 1,
-                        borderRadius: '4px',
-                        fontSize: 12,
-                        fontFamily: 'var(--font-body)',
-                      }}
-                    >
-                      ${d.price.toFixed(2)}
-                    </Box>
-
-                    {/* Image (fixed height, covers top) */}
-                    <Box
-                      component="img"
-                      src={d.strDrinkThumb}
-                      alt={d.strDrink}
-                      sx={{
-                        width: '100%',
-                        height: 140,
-                        objectFit: 'cover',
-                        borderRadius: 1,
-                      }}
-                    />
-
-                    {/* Drink Name (centered, ellipsis) */}
-                    <Box
-                      sx={{
-                        mt: 1,
-                        textAlign: 'center',
-                        fontWeight: 'bold',
-                        fontSize: '1rem',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        fontFamily: 'var(--font-body)',
-                      }}
-                    >
-                      {d.strDrink}
-                    </Box>
-
-                    <Divider sx={{ my: 1 }} />
-
-                    {/* Quantity Controls (bottom) */}
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        px: 2,
-                      }}
-                    >
-                      <IconButton
-                        size="sm"
-                        onClick={() => adjustQty(d.idDrink, -1)}
-                        disabled={q === 0}
-                        color="neutral"
-                      >
-                        <RemoveIcon fontSize="small" />
-                      </IconButton>
-
-                      <Box sx={{ minWidth: 24, textAlign: 'center', fontFamily: 'var(--font-body)' }}>
-                        {q}
-                      </Box>
-
-                      <IconButton
-                        size="sm"
-                        onClick={() => adjustQty(d.idDrink, +1)}
-                        color="primary"
-                      >
-                        <AddIcon fontSize="small" />
-                      </IconButton>
-                    </Box>
-                  </Card>
-                </Grid>
-              );
-            })}
-          </Grid>
-        )}
-      </Box>
-
-      {/* ==== RIGHT‐HAND STICKY SIDEBAR (OrderSummary) ==== */}
-      <Box
-        sx={{
-          width: 300,
-          position: 'sticky',
-          top: 80, // same offset as the sticky bar above
-          right: 0,
-          height: 'calc(100vh - 80px)',
-          overflowY: 'auto',
-          background: 'rgba(255,255,255,0.9)',
-          borderLeft: '1px solid var(--border-light)',
-          p: 2,
-          fontFamily: 'var(--font-body)',
-          display: { xs: 'none', md: 'block' }, // hide on phones
-        }}
-      >
-        <Typography
+        {/* grid of cards */}
+        <Box
           sx={{
-            fontSize: '1.25rem',
-            fontFamily: 'var(--font-heading)',
-            mb: 1,
+            display: 'grid',
+            gap: 2,
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px,1fr))',
           }}
         >
-          Your Order
-        </Typography>
-        <Divider sx={{ mb: 1 }} />
-        <OrderSummary />
+          {loading ? (
+            <Typography>Loading…</Typography>
+          ) : (
+            filtered.map((d) => {
+              const q = qtyMap[d.idDrink] ?? 0;
+              return (
+                <Card
+                  key={d.idDrink}
+                  variant="outlined"
+                  sx={{
+                    p: 1,
+                    borderRadius: 2,
+                    position: 'relative',
+                    transition: 'transform .15s, box-shadow .15s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
+                    },
+                  }}
+                >
+                  {/* price badge */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 6,
+                      right: 6,
+                      bgcolor: 'rgba(0,0,0,0.6)',
+                      color: '#fff',
+                      px: 1,
+                      borderRadius: 1,
+                      fontSize: '0.7rem',
+                    }}
+                  >
+                    ${d.price.toFixed(2)}
+                  </Box>
+
+                  {/* image */}
+                  <Box
+                    component="img"
+                    src={d.strDrinkThumb}
+                    alt={d.strDrink}
+                    sx={{
+                      width: '100%',
+                      height: 120,
+                      objectFit: 'cover',
+                      borderRadius: 1,
+                    }}
+                  />
+
+                  {/* title */}
+                  <Typography
+                    level="title-md"
+                    sx={{
+                      mt: 1,
+                      textAlign: 'center',
+                      fontWeight: '600',
+                      fontSize: '0.9rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {d.strDrink}
+                  </Typography>
+
+                  {/* qty controls */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      gap: 1,
+                      mt: 1,
+                    }}
+                  >
+                    <IconButton
+                      variant="solid"
+                      color="danger"
+                      size="sm"
+                      onClick={() => handleQtyChange(d, -1)}
+                      disabled={q === 0}
+                    >
+                      <RemoveIcon fontSize="small" />
+                    </IconButton>
+                    <Typography sx={{ width: 24, textAlign: 'center' }}>
+                      {q}
+                    </Typography>
+                    <IconButton
+                      variant="solid"
+                      color="success"
+                      size="sm"
+                      onClick={() => handleQtyChange(d, +1)}
+                    >
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </Card>
+              );
+            })
+          )}
+        </Box>
+      </Box>
+
+      {/* 2) Collapsible Sidebar */}
+      <Box
+        sx={{
+          position: 'relative',
+          width: sidebarCollapsed ? 48 : 300,
+          transition: 'width .3s',
+          bgcolor: 'rgba(255,255,255,0.9)',
+          borderLeft: sidebarCollapsed
+            ? 'none'
+            : '1px solid rgba(0,0,0,0.1)',
+        }}
+      >
+        <IconButton
+          aria-label={
+            sidebarCollapsed
+              ? 'Expand order summary'
+              : 'Collapse order summary'
+          }
+          onClick={() => setSidebarCollapsed((v) => !v)}
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: -24,
+            transform: 'translateY(-50%)',
+            bgcolor: '#3E6053',
+            color: '#fff',
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            boxShadow: 2,
+            zIndex: 10,
+            '&:hover': { bgcolor: '#C16757' },
+          }}
+        >
+          {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </IconButton>
+
+        {!sidebarCollapsed && (
+          <Box sx={{ p: 2 }}>
+            <Typography level="h4" sx={{ mb: 1 }}>
+              Your Order
+            </Typography>
+            <Divider sx={{ my: 1 }} />
+
+            <Typography level="body-md" sx={{ fontWeight: '600' }}>
+              Dishes:
+            </Typography>
+            <Typography sx={{ mb: 2 }}>
+              {order.dish
+                ? `${order.dish.name} × ${order.people ?? 1} = $${dishPrice.toFixed(
+                    2
+                  )}`
+                : 'None'}
+            </Typography>
+
+            <Divider sx={{ my: 1 }} />
+
+            <Typography level="body-md" sx={{ fontWeight: '600' }}>
+              Drinks:
+            </Typography>
+            {(order.drinks ?? []).length > 0 ? (
+              order.drinks!.map((d) => (
+                <Typography key={d.id} sx={{ mb: 0.5 }}>
+                  {d.name} × {d.qty} = ${(d.qty! * d.price!).toFixed(2)}
+                </Typography>
+              ))
+            ) : (
+              <Typography sx={{ mb: 2 }}>None</Typography>
+            )}
+
+            <Divider sx={{ my: 1 }} />
+            <Typography
+              level="title-lg"
+              sx={{
+                mt: 2,
+                textAlign: 'right',
+                fontWeight: '700',
+              }}
+            >
+              Total: ${total.toFixed(2)}
+            </Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );
 }
-

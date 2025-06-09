@@ -114,8 +114,7 @@ export async function fetchCategories(): Promise<string[]> {
 }
 
 export async function fetchDrinksByCategory(
-  category: string
-): Promise<Drink[]> {
+category: string, search: string): Promise<Drink[]> {
   const res = await fetch(
     `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(
       category

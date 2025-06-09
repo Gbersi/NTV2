@@ -1,128 +1,88 @@
-/* src/styles/TopMenu.module.css */
+/* src/components/TopMenu.module.css */
 
-:root {
-  --color-primary:   #3E6053;
-  --color-secondary: #C16757;
-  --color-accent:    #BA2329;
-  --bg-light:        #FFFFFF;
-  --text-light:      #FFFFFF;
-  --border-light:    #E0E0E0;
-  --font-body:       'Inter', sans-serif;
-  --font-heading:    'Playfair Display', serif;
-  --radius:          8px;
-  --spacing:         16px;
-}
-
-/* Sticky header/nav */
 .nav {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1rem 2rem;
+  background: rgba(62, 96, 83, 0.75);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Container inside nav for alignment */
-.nav-container {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* Logo container */
-.logoContainer {
-  flex: 0;
+.logo {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.logo {
-  height: 3rem;
-  transition: height 0.2s ease;
+.logoImg {
+  height: 2.5rem;
+  width: auto;
 }
 
-/* Adjust logo on small screens */
-@media (max-width: 600px) {
-  .logo {
-    height: 2.5rem;
-  }
+.wordmark {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.5rem;
+  color: #fff;
+  letter-spacing: 1px;
 }
 
-/* Right‐side link group */
-.linkGroup {
+.menu {
   display: flex;
-  gap: 1.5rem;
+  gap: 2rem;
 }
 
-/* Individual nav link */
-.link {
-  color: var(--text-light);
-  text-decoration: none;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 1.1rem;
-  letter-spacing: 0.5px;
-  transition: color 0.2s ease, transform 0.1s ease;
+.menuLink {
   position: relative;
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.25rem 0;
+  transition: color 0.3s ease;
 }
 
-.link::after {
+.menuLink::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -2px;
   left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--color-accent);
-  transition: width 0.2s ease;
-}
-
-.link:hover {
-  color: var(--color-secondary);
-  transform: scale(1.02);
-}
-
-.link:hover::after {
   width: 100%;
+  height: 2px;
+  background: #C16757;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
 }
 
-/* “Active” nav link */
+.menuLink:hover {
+  color: #C16757;
+}
+
+.menuLink:hover::after {
+  transform: scaleX(1);
+}
+
 .active {
-  color: var(--color-secondary);
+  color: #C16757;
 }
 
 .active::after {
-  width: 100%;
+  transform: scaleX(1);
 }
 
-/* Responsive nav on small screens */
-@media (max-width: 600px) {
-  .linkGroup {
-    flex-wrap: wrap;
-    justify-content: center;
+@media (max-width: 800px) {
+  .nav {
+    flex-direction: column;
+    padding: 0.75rem 1rem;
+  }
+  .menu {
     gap: 1rem;
     margin-top: 0.5rem;
-  }
-}
-
-/* Mobile “hamburger” placeholder 
-   (if you want to later add a toggle)—for now it’s hidden */
-.hamburger {
-  display: none;
-}
-
-@media (max-width: 600px) {
-  .hamburger {
-    display: block;
-    color: var(--text-light);
-    cursor: pointer;
-    font-size: 1.5rem;
   }
 }

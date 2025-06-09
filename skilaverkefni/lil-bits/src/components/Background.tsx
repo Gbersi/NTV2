@@ -1,17 +1,28 @@
 // src/components/Background.tsx
-
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 export default function Background() {
-  const p = usePathname() || '/';
+  const pathname = usePathname() || '/';
+  const [offsetY, setOffsetY] = useState(0);
+
+  // Pick image based on route
   let img = '/images/lilbits-landingpage.png';
-  if (p.startsWith('/dish')) img = '/images/lilbits-dishes2.png';
-  if (p.startsWith('/drinks')) img = '/images/lilbits-drinks.png';
-  if (p.startsWith('/order')) img = '/images/lilbits-order-bg.png';
-  if (p.startsWith('/order/receipt')) img = '/images/lilbits-receipt.png';
+  if (pathname.startsWith('/dish')) img = '/images/lilbits-dishes2.png';
+  if (pathname.startsWith('/drinks')) img = '/images/lilbits-drinks.png';
+  if (pathname.startsWith('/order')) img = '/images/lilbits-order-bg.png';
+  if (pathname.startsWith('/receipt')) img = '/images/lilbits-receipt.png';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Move background 5% of scrollY
+      setOffsetY(window.scrollY * 0.05);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div
@@ -22,7 +33,9 @@ export default function Background() {
         backgroundImage: `url(${img})`,
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
-        backgroundPosition: 'center',
+        // center horizontally, shift vertically by offsetY
+        backgroundPosition: `center ${-offsetY}px`,
+        willChange: 'background-position',
       }}
     />
   );
