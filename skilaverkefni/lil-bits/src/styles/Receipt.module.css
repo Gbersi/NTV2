@@ -4,7 +4,7 @@
   padding: 2rem;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   font-family: var(--font-body);
 }
 
@@ -27,7 +27,11 @@
   font-size: 1.25rem;
   margin-bottom: 1rem;
   border-bottom: 2px solid transparent;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary),
+    var(--color-accent)
+  );
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -64,7 +68,9 @@
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  transition: transform .1s, background .2s;
+  transition:
+    transform 0.1s,
+    background 0.2s;
 }
 .homeButton {
   background: var(--color-accent);

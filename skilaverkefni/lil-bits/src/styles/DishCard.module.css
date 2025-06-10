@@ -1,7 +1,7 @@
 :root {
-  --color-primary: #3E6053;
-  --color-secondary: #C16757;
-  --color-accent: #BA2329;
+  --color-primary: #3e6053;
+  --color-secondary: #c16757;
+  --color-accent: #ba2329;
   --font-heading: 'Playfair Display', serif;
   --font-body: 'Inter', sans-serif;
 }
@@ -12,14 +12,16 @@
   border-radius: 16px;
   overflow: hidden;
   background: #fff;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  transition: transform .3s ease, box-shadow .3s ease;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   display: flex;
   flex-direction: column;
 }
 .card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
 .image {
@@ -67,18 +69,28 @@
 .button {
   flex: 1;
   padding: 1rem 0;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-accent));
+  background: linear-gradient(
+    90deg,
+    var(--color-secondary),
+    var(--color-accent)
+  );
   color: #fff;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
   font-family: var(--font-body);
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  transition: background .3s ease, transform .1s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    background 0.3s ease,
+    transform 0.1s ease;
 }
 .button:hover {
-  background: linear-gradient(90deg, var(--color-accent), var(--color-secondary));
+  background: linear-gradient(
+    90deg,
+    var(--color-accent),
+    var(--color-secondary)
+  );
   transform: translateY(-2px);
 }
 .button:active {
@@ -87,4 +99,15 @@
 .button:disabled {
   background: #ccc;
   cursor: not-allowed;
+}
+
+.glassEffect {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(50, 60, 40, 0.08),
+    0 1.5px 8px rgba(50, 96, 83, 0.08);
+  border-radius: 1.5rem;
+  box-sizing: border-box;
+  overflow-x: auto;
 }

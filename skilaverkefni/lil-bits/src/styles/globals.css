@@ -1,0 +1,48 @@
+/* styles/globals.css */
+:root {
+  --color-primary: #3e6053;
+  --color-secondary: #c16757;
+  --color-accent: #ba2329;
+}
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.glowGoldTitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 700;
+  font-size: 2.6rem;
+  text-align: center;
+  background: linear-gradient(95deg, #fffbe9 65%, #e9c88a 90%, #c8b273 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 2.8px;
+  filter: brightness(1.12) drop-shadow(0 2px 8px #c8b27377);
+  text-shadow:
+    0 3px 32px #c8b2732a,
+    0 1.5px 14px #fff9dd,
+    0 0px 2px #ba232966;
+}
+
+:root {
+  --joy-palette-primary-solidBg: var(--color-primary);
+  --joy-palette-primary-solidHoverBg: var(--color-secondary);
+
+  --joy-palette-neutral-outlinedBorder: var(--color-secondary);
+  --joy-palette-neutral-outlinedHoverBg: rgba(193, 103, 87, 0.1);
+}
+
+html,
+body,
+#__next,
+main {
+  overflow-x: visible !important;
+}

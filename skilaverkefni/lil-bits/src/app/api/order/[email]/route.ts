@@ -1,11 +1,10 @@
 // src/app/api/order/[email]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { findOrder } from '../../../../lib/data';
-import type { Order } from '../../../../types';
+import { findOrder } from '../../data';
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { email: string } }
+  { params }: { params: { email: string } },
 ) {
   const email = decodeURIComponent(params.email);
   const order = findOrder(email);

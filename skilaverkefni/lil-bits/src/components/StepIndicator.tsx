@@ -1,10 +1,10 @@
-import React from 'react'
-import { Box } from '@mui/joy'
-import Typography from '@mui/joy/Typography'
+import React from 'react';
+import { Box } from '@mui/joy';
+import Typography from '@mui/joy/Typography';
 
 interface StepIndicatorProps {
-  currentStep: number
-  labels?: string[]
+  currentStep: number;
+  labels?: string[];
 }
 
 export default function StepIndicator({
@@ -32,5 +32,5 @@ export default function StepIndicator({
         </Typography>
       ))}
     </Box>
-  )
+  );
 }

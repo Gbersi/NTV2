@@ -1,6 +1,6 @@
 // src/app/api/create-order/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { addOrder } from '../../../lib/data';
+import { addOrder } from '../data';
 import type { Order } from '../../../types';
 
 export async function POST(req: NextRequest) {

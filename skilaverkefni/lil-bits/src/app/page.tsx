@@ -11,7 +11,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import { OrderContext } from '../context/OrderContext';
-import { fetchOrderByEmail } from '../lib/api';
+import { fetchOrderByEmail } from './api/orders';
 
 export default function HomePage() {
   const router = useRouter();
@@ -25,9 +25,11 @@ export default function HomePage() {
   useEffect(() => {
     (async function loadSlides() {
       const imgs: string[] = [];
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 8; i++) {
         try {
-          const r = await fetch('https://www.themealdb.com/api/json/v1/1/random.php');
+          const r = await fetch(
+            'https://www.themealdb.com/api/json/v1/1/random.php',
+          );
           const d = await r.json();
           imgs.push(d.meals[0].strMealThumb);
         } catch {}
@@ -79,6 +81,7 @@ export default function HomePage() {
           alt="Lil Bits Logo"
           fill
           style={{ objectFit: 'contain' }}
+          priority
         />
       </Box>
 
@@ -87,9 +90,12 @@ export default function HomePage() {
         level="h2"
         sx={{
           mt: { xs: 0.5, md: 1 },
-          fontFamily: '"Libre Baskerville", serif',
-          fontSize: { xs: '2rem', md: '3rem' },
+          fontFamily: '"Cormorant Garamond", serif',
+          fontSize: { xs: '2rem', md: '3.2rem' },
           letterSpacing: 1.2,
+          color: '#2A4036',
+          textShadow: '0 2px 16px #c8b27311',
+          fontWeight: 700,
         }}
       >
         Welcome to Lil Bits
@@ -98,9 +104,11 @@ export default function HomePage() {
         level="body-lg"
         sx={{
           mt: { xs: 0.25, md: 0.5 },
-          fontSize: { xs: '1rem', md: '1.25rem' },
-          maxWidth: 600,
+          fontSize: { xs: '1.08rem', md: '1.32rem' },
+          maxWidth: 620,
           mx: 'auto',
+          color: '#3E6053',
+          fontWeight: 500,
         }}
       >
         Enjoy our bite-sized meals and incredible cocktail selection.
@@ -119,16 +127,25 @@ export default function HomePage() {
         <Button
           onClick={startNew}
           sx={{
-            minWidth: 180,
+            minWidth: 190,
             backgroundColor: '#3E6053',
+            fontSize: '1.12rem',
+            fontWeight: 600,
+            py: 1.2,
+            px: 2.6,
+            borderRadius: '1.2em',
+            boxShadow: '0 2px 16px #3e605318',
             '&:hover': { backgroundColor: '#C16757' },
           }}
         >
           Start New Order
         </Button>
 
-        <Box sx={{ textAlign: 'left' }}>
-          <Typography level="body-sm" sx={{ mb: 1, color: '#ccc' }}>
+        <Box sx={{ textAlign: 'left', minWidth: 300 }}>
+          <Typography
+            level="body-sm"
+            sx={{ mb: 1, color: '#888', fontWeight: 500 }}
+          >
             Have an existing order? Resume by email:
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -136,7 +153,7 @@ export default function HomePage() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              sx={{ flex: 1 }}
+              sx={{ flex: 1, fontSize: '1.08rem' }}
             />
             <Button
               onClick={resume}
@@ -144,7 +161,9 @@ export default function HomePage() {
               sx={{
                 borderColor: '#3E6053',
                 color: '#3E6053',
-                '&:hover': { backgroundColor: 'rgba(62,96,83,0.1)' },
+                fontWeight: 700,
+                px: 2,
+                '&:hover': { backgroundColor: 'rgba(62,96,83,0.09)' },
               }}
             >
               Resume
@@ -158,34 +177,65 @@ export default function HomePage() {
         </Box>
       </Box>
 
+      {/* Enlarged carousel */}
       {!loadingSlides && slides.length > 0 && (
-        <Box sx={{ py: 6, px: 2 }}>
+        <Box
+          sx={{
+            py: { xs: 3, md: 7 },
+            px: { xs: 0, md: 8 },
+            maxWidth: { xs: '99vw', md: '1240px' },
+            mx: 'auto',
+            width: '100%',
+          }}
+        >
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
-            spaceBetween={20}
+            spaceBetween={40}
             slidesPerView={1}
             breakpoints={{
               600: { slidesPerView: 2 },
               900: { slidesPerView: 3 },
+              1200: { slidesPerView: 4 },
             }}
             navigation
             pagination={{ clickable: true }}
-            autoplay={{ delay: 3000, pauseOnMouseEnter: true }}
+            autoplay={{ delay: 4000, pauseOnMouseEnter: true }}
             loop
+            style={{
+              minHeight: 270,
+              maxHeight: 340,
+              paddingBottom: 38,
+              borderRadius: '2rem',
+              background: 'rgba(255,255,255,0.09)',
+              boxShadow: '0 4px 36px #3e60532a',
+            }}
           >
             {slides.map((url, i) => (
               <SwiperSlide key={i}>
                 <Box
-                  component="img"
-                  src={url}
-                  alt={`Slide ${i + 1}`}
                   sx={{
                     width: '100%',
-                    height: { xs: 200, sm: 250, md: 300 },
-                    objectFit: 'cover',
-                    borderRadius: 2,
+                    height: { xs: 220, sm: 260, md: 320 },
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                   }}
-                />
+                >
+                  <Image
+                    src={url}
+                    alt={`Dish Slide ${i + 1}`}
+                    width={340}
+                    height={260}
+                    style={{
+                      width: '100%',
+                      maxHeight: 320,
+                      objectFit: 'cover',
+                      borderRadius: '1.5rem',
+                      boxShadow: '0 1.5px 12px #c8b27327',
+                    }}
+                    loading="lazy"
+                  />
+                </Box>
               </SwiperSlide>
             ))}
           </Swiper>

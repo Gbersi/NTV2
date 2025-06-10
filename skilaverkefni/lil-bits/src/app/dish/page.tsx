@@ -2,19 +2,13 @@
 
 import React, { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  Box,
-  Button,
-  Card,
-  IconButton,
-  Typography,
-  Divider,
-} from '@mui/joy';
+import { Box, Button, Card, IconButton, Typography, Divider } from '@mui/joy';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { OrderContext } from '../../context/OrderContext';
+import glassStyles from '../../styles/glasscard.module.css';
 
 interface ApiMeal {
   idMeal: string;
@@ -39,7 +33,6 @@ export default function DishPage() {
   const [loadingImage, setLoadingImage] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // Fetch + preload random dish
   useEffect(() => {
     pickDish();
   }, []);
@@ -58,7 +51,7 @@ export default function DishPage() {
           price: parseFloat((Math.random() * 90 + 10).toFixed(2)),
         };
         // Preload
-        const img = new Image();
+        const img = new window.Image();
         img.src = next.imageSource;
         img.onload = () => {
           setDish(next);
@@ -69,7 +62,7 @@ export default function DishPage() {
           setLoadingImage(false);
         };
       })
-      .catch(console.error);
+      .catch(() => setLoadingImage(false));
   }
 
   const handleSelect = () => {
@@ -78,31 +71,32 @@ export default function DishPage() {
     router.push('/drinks');
   };
 
-  const guestCount   = order.people ?? 1;
-  const dishSubtotal = (dish?.price ?? 0) * guestCount;
+  const guestCount = order.people ?? 1;
+  const dishPrice = (dish?.price ?? 0) * guestCount;
+  const drinksSubtotal = (order.drinks ?? []).reduce(
+    (sum, d) => sum + (d.price ?? 0) * (d.qty ?? 0),
+    0,
+  );
+  const total = dishPrice + drinksSubtotal;
 
   return (
     <Box
       sx={{
         display: 'flex',
         height: '100vh',
-        overflow: 'visible',           // ← allow toggle to overflow
+        overflow: 'visible',
       }}
     >
       {/* === Dish card === */}
       <Box sx={{ flex: 1, p: 4, overflowY: 'auto' }}>
         <Card
+          className={glassStyles.glassCard}
           variant="outlined"
           sx={{
             maxWidth: 450,
             mx: 'auto',
             p: 2,
             position: 'relative',
-            transition: 'transform .2s, box-shadow .2s',
-            '&:hover': {
-              transform: 'translateY(-4px)',
-              boxShadow: '0 6px 20px rgba(0,0,0,0.15)',
-            },
             // fade image in/out on reload
             '.dish-img': {
               transition: 'opacity .3s',
@@ -111,20 +105,9 @@ export default function DishPage() {
           }}
         >
           {dish && (
-            <Box
-              sx={{
-                position: 'absolute',
-                top: 8,
-                right: 8,
-                bgcolor: 'rgba(0,0,0,0.6)',
-                color: '#fff',
-                px: 1,
-                borderRadius: 1,
-                fontSize: '0.75rem',
-              }}
-            >
+            <span className={glassStyles.priceBadge}>
               ${dish.price.toFixed(2)}
-            </Box>
+            </span>
           )}
 
           {dish && (
@@ -143,7 +126,10 @@ export default function DishPage() {
             />
           )}
 
-          <Typography level="h4" sx={{ textAlign: 'center', fontWeight: 'bold' }}>
+          <Typography
+            level="h4"
+            sx={{ textAlign: 'center', fontWeight: 'bold' }}
+          >
             {dish?.name ?? 'Loading…'}
           </Typography>
           <Typography
@@ -184,24 +170,21 @@ export default function DishPage() {
         </Card>
       </Box>
 
-      {/* === Collapsible sidebar === */}
+      {/* === Collapsible Sidebar === */}
       <Box
         sx={{
           position: 'relative',
-          width: sidebarCollapsed ? 48 : 320,
+          width: sidebarCollapsed ? 48 : 300,
           transition: 'width .3s',
-          bgcolor: 'rgba(255,255,255,0.9)',
+          bgcolor: 'rgba(255,255,255,0.93)',
           borderLeft: sidebarCollapsed
             ? 'none'
-            : '1px solid rgba(0,0,0,0.1)',
-          overflowY: 'auto',
+            : '1px solid rgba(200,178,115,0.13)',
         }}
       >
         <IconButton
           aria-label={
-            sidebarCollapsed
-              ? 'Expand order summary'
-              : 'Collapse order summary'
+            sidebarCollapsed ? 'Expand order summary' : 'Collapse order summary'
           }
           onClick={() => setSidebarCollapsed((v) => !v)}
           sx={{
@@ -224,31 +207,46 @@ export default function DishPage() {
 
         {!sidebarCollapsed && (
           <Box sx={{ p: 2 }}>
-            <Typography level="h4" sx={{ mb: 1 }}>
+            <Typography level="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
               Your Order
             </Typography>
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
 
-            <Typography level="body-md" sx={{ fontWeight: 'bold' }}>
+            <Typography level="body-md" sx={{ fontWeight: 600 }}>
               Dishes:
             </Typography>
             <Typography sx={{ mb: 2 }}>
               {dish
-                ? `${dish.name} × ${guestCount} = $${dishSubtotal.toFixed(2)}`
+                ? `${dish.name} × ${guestCount} = $${dishPrice.toFixed(2)}`
                 : 'None'}
             </Typography>
 
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
+
+            <Typography level="body-md" sx={{ fontWeight: 600 }}>
+              Drinks:
+            </Typography>
+            {(order.drinks ?? []).length > 0 ? (
+              (order.drinks ?? []).map((d) => (
+                <Typography key={d.id} sx={{ mb: 0.5 }}>
+                  {d.name} × {d.qty} = ${(d.qty! * d.price!).toFixed(2)}
+                </Typography>
+              ))
+            ) : (
+              <Typography sx={{ mb: 2 }}>None</Typography>
+            )}
+
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
             <Typography
               level="title-lg"
-              component="h5"
               sx={{
                 mt: 2,
                 textAlign: 'right',
-                fontWeight: 'bold',
+                fontWeight: 700,
+                color: '#3E6053',
               }}
             >
-              Total: ${dishSubtotal.toFixed(2)}
+              Total: ${total.toFixed(2)}
             </Typography>
           </Box>
         )}

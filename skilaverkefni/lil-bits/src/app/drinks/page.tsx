@@ -24,6 +24,7 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { OrderContext } from '../../context/OrderContext';
+import glassStyles from '../../styles/glasscard.module.css';
 
 interface RawDrink {
   idDrink: string;
@@ -33,6 +34,15 @@ interface RawDrink {
 
 interface Drink extends RawDrink {
   price: number;
+  qty?: number;
+}
+
+interface CategoryResponse {
+  drinks: { strCategory: string }[];
+}
+
+interface FilterResponse {
+  drinks: RawDrink[];
 }
 
 export default function DrinksPage() {
@@ -44,8 +54,6 @@ export default function DrinksPage() {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [drinks, setDrinks] = useState<Drink[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
-  // track quantities by drink ID
   const [qtyMap, setQtyMap] = useState<Record<string, number>>(() => {
     const init: Record<string, number> = {};
     (order.drinks ?? []).forEach((d) => {
@@ -53,57 +61,43 @@ export default function DrinksPage() {
     });
     return init;
   });
-
-  // sidebar collapsed state
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  // compute subtotals & total
   const { dishPrice, total } = useMemo(() => {
     const guests = order.people ?? 1;
     const dp = (order.dish?.price ?? 0) * guests;
     const dt = (order.drinks ?? []).reduce(
       (sum, d) => sum + (d.price ?? 0) * (d.qty ?? 0),
-      0
+      0,
     );
     return { dishPrice: dp, total: dp + dt };
   }, [order]);
 
-  // load categories
   useEffect(() => {
     fetch('https://www.thecocktaildb.com/api/json/v1/1/list.php?c=list')
-      .then((r) => r.json())
+      .then((res) => res.json() as Promise<CategoryResponse>)
       .then((data) => {
-        const cats = Array.isArray(data.drinks)
-          ? data.drinks.map((c: any) => c.strCategory)
-          : [];
+        const cats = data.drinks.map((c) => c.strCategory);
         setCategories(['All', ...cats]);
       })
       .catch(console.error);
   }, []);
 
-  // load drinks on category change
   useEffect(() => {
     setLoading(true);
     const url =
       activeCategory === 'All'
         ? 'https://www.thecocktaildb.com/api/json/v1/1/filter.php?a=Alcoholic'
-        : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(
-            activeCategory
-          )}`;
+        : `https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${encodeURIComponent(activeCategory)}`;
 
     fetch(url)
-      .then((r) => r.json())
+      .then((res) => res.json() as Promise<FilterResponse>)
       .then((data) => {
-        const raw: RawDrink[] = Array.isArray(data.drinks)
-          ? data.drinks
-          : [];
-        const list: Drink[] = raw.slice(0, 12).map((d) => ({
+        const list = data.drinks.slice(0, 18).map((d) => ({
           ...d,
           price: parseFloat((Math.random() * 8 + 2).toFixed(2)),
         }));
         setDrinks(list);
-
-        // seed qtyMap so every card has a count
         setQtyMap((prev) => {
           const next = { ...prev };
           list.forEach((d) => {
@@ -116,31 +110,67 @@ export default function DrinksPage() {
       .finally(() => setLoading(false));
   }, [activeCategory]);
 
-  // filter by search
-  const filtered = useMemo(() => {
-    if (!searchTerm) return drinks;
-    const t = searchTerm.toLowerCase();
-    return drinks.filter((d) =>
-      d.strDrink.toLowerCase().includes(t)
-    );
-  }, [searchTerm, drinks]);
+  const [searchResults, setSearchResults] = useState<Drink[] | null>(null);
 
-  // update quantity
-  const handleQtyChange = (d: Drink, delta: number) => {
-    const id = d.idDrink;
-    const curr = qtyMap[id] ?? 0;
-    const nextQty = Math.max(0, curr + delta);
+  useEffect(() => {
+    let ignore = false;
+    const fetchSearch = async () => {
+      if (!searchTerm) {
+        setSearchResults(null);
+        return;
+      }
+      setLoading(true);
 
-    setQtyMap((p) => ({ ...p, [id]: nextQty }));
+      const byNameRes = await fetch(
+        `https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${encodeURIComponent(searchTerm)}`,
+      );
+      const byNameJson = await byNameRes.json();
+      const byName: RawDrink[] = Array.isArray(byNameJson.drinks)
+        ? byNameJson.drinks
+        : [];
+
+      const byIngRes = await fetch(
+        `https://www.thecocktaildb.com/api/json/v1/1/filter.php?i=${encodeURIComponent(searchTerm)}`,
+      );
+      const byIngJson = await byIngRes.json();
+      const byIngredient: RawDrink[] = Array.isArray(byIngJson.drinks)
+        ? byIngJson.drinks
+        : [];
+
+      const all: Record<string, RawDrink> = {};
+      byName.forEach((d) => (all[d.idDrink] = d));
+      byIngredient.forEach((d) => (all[d.idDrink] = d));
+      const merged: Drink[] = Object.values(all).map((d) => ({
+        ...d,
+        price: parseFloat((Math.random() * 8 + 2).toFixed(2)),
+      }));
+
+      if (!ignore) {
+        setSearchResults(merged.slice(0, 18));
+        setLoading(false);
+      }
+    };
+    fetchSearch();
+    return () => {
+      ignore = true;
+    };
+  }, [searchTerm]);
+
+  const displayedDrinks = searchTerm ? (searchResults ?? []) : drinks;
+
+  const handleQtyChange = (drink: Drink, delta: number) => {
+    const id = drink.idDrink;
+    const nextQty = Math.max(0, (qtyMap[id] ?? 0) + delta);
+    setQtyMap((prev) => ({ ...prev, [id]: nextQty }));
     setOrder((o) => {
       const others = (o.drinks ?? []).filter((x) => x.id !== id);
       if (nextQty > 0) {
         others.push({
-          id,
-          name: d.strDrink,
+          id: id,
+          name: drink.strDrink,
           description: '',
-          imageSource: d.strDrinkThumb,
-          price: d.price,
+          imageSource: drink.strDrinkThumb,
+          price: drink.price,
           qty: nextQty,
           category: activeCategory,
           brewer: '',
@@ -150,13 +180,10 @@ export default function DrinksPage() {
     });
   };
 
-  const goToOrder = () => router.push('/order');
-
   return (
-    <Box sx={{ display: 'flex' /* page scroll only */ }}>
-      {/* 1) Main content */}
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {/* Main Content */}
       <Box sx={{ flex: 1, p: 4 }}>
-        {/* filters + button */}
         <Box sx={{ display: 'flex', gap: 2, mb: 3, flexWrap: 'wrap' }}>
           <Select
             value={activeCategory}
@@ -170,29 +197,26 @@ export default function DrinksPage() {
               </Option>
             ))}
           </Select>
-
           <Input
-            placeholder="Search drinks…"
+            placeholder="Search by name or ingredient…"
             value={searchTerm}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setSearchTerm(e.target.value)
             }
             sx={{ flex: 1, minWidth: 200 }}
           />
-
           <Button
-            onClick={goToOrder}
+            onClick={() => router.push('/order')}
             disabled={!((order.drinks ?? []).length > 0)}
             sx={{
-              backgroundColor: '#3E6053',
-              '&:hover': { backgroundColor: '#C16757' },
+              backgroundColor: 'var(--color-primary)',
+              '&:hover': { backgroundColor: 'var(--color-secondary)' },
             }}
           >
             Continue to Order
           </Button>
         </Box>
 
-        {/* grid of cards */}
         <Box
           sx={{
             display: 'grid',
@@ -203,40 +227,23 @@ export default function DrinksPage() {
           {loading ? (
             <Typography>Loading…</Typography>
           ) : (
-            filtered.map((d) => {
-              const q = qtyMap[d.idDrink] ?? 0;
+            displayedDrinks.map((d) => {
+              const qty = qtyMap[d.idDrink] ?? 0;
               return (
                 <Card
+                  className={glassStyles.glassCard}
                   key={d.idDrink}
                   variant="outlined"
                   sx={{
                     p: 1,
                     borderRadius: 2,
                     position: 'relative',
-                    transition: 'transform .15s, box-shadow .15s',
-                    '&:hover': {
-                      transform: 'translateY(-4px)',
-                      boxShadow: '0 4px 16px rgba(0,0,0,0.1)',
-                    },
                   }}
                 >
-                  {/* price badge */}
-                  <Box
-                    sx={{
-                      position: 'absolute',
-                      top: 6,
-                      right: 6,
-                      bgcolor: 'rgba(0,0,0,0.6)',
-                      color: '#fff',
-                      px: 1,
-                      borderRadius: 1,
-                      fontSize: '0.7rem',
-                    }}
-                  >
+                  <span className={glassStyles.priceBadge}>
                     ${d.price.toFixed(2)}
-                  </Box>
+                  </span>
 
-                  {/* image */}
                   <Box
                     component="img"
                     src={d.strDrinkThumb}
@@ -249,13 +256,12 @@ export default function DrinksPage() {
                     }}
                   />
 
-                  {/* title */}
                   <Typography
                     level="title-md"
                     sx={{
                       mt: 1,
                       textAlign: 'center',
-                      fontWeight: '600',
+                      fontWeight: 600,
                       fontSize: '0.9rem',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
@@ -265,7 +271,6 @@ export default function DrinksPage() {
                     {d.strDrink}
                   </Typography>
 
-                  {/* qty controls */}
                   <Box
                     sx={{
                       display: 'flex',
@@ -280,12 +285,12 @@ export default function DrinksPage() {
                       color="danger"
                       size="sm"
                       onClick={() => handleQtyChange(d, -1)}
-                      disabled={q === 0}
+                      disabled={qty === 0}
                     >
                       <RemoveIcon fontSize="small" />
                     </IconButton>
                     <Typography sx={{ width: 24, textAlign: 'center' }}>
-                      {q}
+                      {qty}
                     </Typography>
                     <IconButton
                       variant="solid"
@@ -303,23 +308,22 @@ export default function DrinksPage() {
         </Box>
       </Box>
 
-      {/* 2) Collapsible Sidebar */}
+      {/* Collapsible Sidebar */}
       <Box
         sx={{
           position: 'relative',
           width: sidebarCollapsed ? 48 : 300,
+          minHeight: '100vh',
           transition: 'width .3s',
-          bgcolor: 'rgba(255,255,255,0.9)',
+          bgcolor: 'rgba(255,255,255,0.93)',
           borderLeft: sidebarCollapsed
             ? 'none'
-            : '1px solid rgba(0,0,0,0.1)',
+            : '1px solid rgba(200,178,115,0.13)',
         }}
       >
         <IconButton
           aria-label={
-            sidebarCollapsed
-              ? 'Expand order summary'
-              : 'Collapse order summary'
+            sidebarCollapsed ? 'Expand order summary' : 'Collapse order summary'
           }
           onClick={() => setSidebarCollapsed((v) => !v)}
           sx={{
@@ -327,14 +331,14 @@ export default function DrinksPage() {
             top: '50%',
             left: -24,
             transform: 'translateY(-50%)',
-            bgcolor: '#3E6053',
+            bgcolor: 'var(--color-primary)',
             color: '#fff',
             width: 40,
             height: 40,
             borderRadius: '50%',
             boxShadow: 2,
             zIndex: 10,
-            '&:hover': { bgcolor: '#C16757' },
+            '&:hover': { bgcolor: 'var(--color-secondary)' },
           }}
         >
           {sidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -342,25 +346,25 @@ export default function DrinksPage() {
 
         {!sidebarCollapsed && (
           <Box sx={{ p: 2 }}>
-            <Typography level="h4" sx={{ mb: 1 }}>
+            <Typography level="h4" sx={{ mb: 1, fontWeight: 'bold' }}>
               Your Order
             </Typography>
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
 
-            <Typography level="body-md" sx={{ fontWeight: '600' }}>
+            <Typography level="body-md" sx={{ fontWeight: 600 }}>
               Dishes:
             </Typography>
             <Typography sx={{ mb: 2 }}>
               {order.dish
                 ? `${order.dish.name} × ${order.people ?? 1} = $${dishPrice.toFixed(
-                    2
+                    2,
                   )}`
                 : 'None'}
             </Typography>
 
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
 
-            <Typography level="body-md" sx={{ fontWeight: '600' }}>
+            <Typography level="body-md" sx={{ fontWeight: 600 }}>
               Drinks:
             </Typography>
             {(order.drinks ?? []).length > 0 ? (
@@ -373,13 +377,14 @@ export default function DrinksPage() {
               <Typography sx={{ mb: 2 }}>None</Typography>
             )}
 
-            <Divider sx={{ my: 1 }} />
+            <Divider sx={{ my: 1, borderColor: 'var(--color-gold,#c8b273)' }} />
             <Typography
               level="title-lg"
               sx={{
                 mt: 2,
                 textAlign: 'right',
-                fontWeight: '700',
+                fontWeight: 700,
+                color: '#3E6053',
               }}
             >
               Total: ${total.toFixed(2)}

@@ -1,17 +1,14 @@
 // src/components/StepContainer.tsx
-'use client'
+'use client';
 
-import React, { ReactNode } from 'react'
+import React, { ReactNode } from 'react';
 
 interface StepContainerProps {
-  children: ReactNode
-  index: number
+  children: ReactNode;
+  index: number;
 }
 
-export default function StepContainer({
-  children,
-  index,
-}: StepContainerProps) {
+export default function StepContainer({ children, index }: StepContainerProps) {
   return (
     <div
       className="step-container"
@@ -24,5 +21,5 @@ export default function StepContainer({
     >
       {children}
     </div>
-  )
+  );
 }

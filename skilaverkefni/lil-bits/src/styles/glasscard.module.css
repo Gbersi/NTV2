@@ -1,0 +1,41 @@
+/* src/styles/glasscard.module.css */
+.glassCard {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(50, 60, 40, 0.08),
+    0 1.5px 8px rgba(50, 96, 83, 0.08);
+  border-radius: 1.5rem;
+  transition:
+    box-shadow 0.22s,
+    transform 0.22s;
+  border: 1px solid rgba(200, 178, 115, 0.12);
+}
+.glassCard:hover {
+  box-shadow: 0 16px 64px rgba(50, 96, 83, 0.16);
+  transform: translateY(-4px) scale(1.03);
+}
+.priceBadge {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  z-index: 4;
+  background: linear-gradient(98deg, #fffbe9 60%, #e9c88a 90%, #c8b273 100%);
+  color: #3e6053;
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 1.12rem;
+  padding: 0.26em 1.1em 0.18em 1.1em;
+  border-radius: 1.2em;
+  box-shadow: 0 2px 12px #c8b27328;
+  border: 1.3px solid #c8b27344;
+  letter-spacing: 0.02em;
+  filter: brightness(1.08);
+  text-shadow: 0 1px 8px #fffbe9b9;
+  transition: transform 0.14s cubic-bezier(0.5, 0.6, 0.3, 1.2);
+}
+
+.glassCard:hover .priceBadge {
+  transform: scale(1.08) translateY(-2px);
+  background: linear-gradient(90deg, #fffbe9 50%, #e9c88a 90%, #ba2329 130%);
+}

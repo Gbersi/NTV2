@@ -1,6 +1,6 @@
 // src/app/api/update-order/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { updateOrder } from '../../../lib/data';
+import { updateOrder } from '../data';
 import type { Order } from '../../../types';
 
 export async function PUT(req: NextRequest) {

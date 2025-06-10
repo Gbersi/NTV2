@@ -1,0 +1,149 @@
+{
+  "orders": [
+    {
+      "dish": {
+        "id": "52824",
+        "name": "Beef Sunday Roast",
+        "category": "Beef",
+        "imageSource": "https://www.themealdb.com/images/media/meals/ssrrrs1503664277.jpg",
+        "price": 86.18
+      },
+      "drinks": [
+        {
+          "id": "17105",
+          "name": "501 Blue",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/ywxwqs1461867097.jpg",
+          "price": 6.18,
+          "qty": 2,
+          "category": "All",
+          "brewer": ""
+        },
+        {
+          "id": "12732",
+          "name": "Chocolate Beverage",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/jbqrhv1487603186.jpg",
+          "price": 6.82,
+          "qty": 2,
+          "category": "Cocoa",
+          "brewer": ""
+        }
+      ],
+      "email": "Gunnarbersi@gmail.com",
+      "date": "2025-06-24",
+      "time": "23:28",
+      "people": 3,
+      "id": "1"
+    },
+    {
+      "dish": {
+        "id": "52796",
+        "name": "Chicken Alfredo Primavera",
+        "category": "Chicken",
+        "imageSource": "https://www.themealdb.com/images/media/meals/syqypv1486981727.jpg",
+        "price": 90.02
+      },
+      "drinks": [
+        {
+          "id": "15288",
+          "name": "252",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/rtpxqw1468877562.jpg",
+          "price": 7.69,
+          "qty": 2,
+          "category": "All",
+          "brewer": ""
+        },
+        {
+          "id": "14306",
+          "name": "Amaretto Stone Sour",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/xwryyx1472719921.jpg",
+          "price": 6.73,
+          "qty": 2,
+          "category": "Other / Unknown",
+          "brewer": ""
+        }
+      ],
+      "email": "Gunnarbersi@gmail.com",
+      "date": "2025-06-18",
+      "time": "22:40",
+      "people": 1,
+      "id": "2"
+    },
+    {
+      "dish": {
+        "id": "52831",
+        "name": "Chicken Karaage",
+        "category": "Chicken",
+        "imageSource": "https://www.themealdb.com/images/media/meals/tyywsw1505930373.jpg",
+        "price": 37.55
+      },
+      "drinks": [
+        {
+          "id": "15346",
+          "name": "155 Belmont",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/yqvvqs1475667388.jpg",
+          "price": 5.32,
+          "qty": 2,
+          "category": "All",
+          "brewer": ""
+        },
+        {
+          "id": "16202",
+          "name": "Amaretto Sweet & Sour",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/vswwus1472668546.jpg",
+          "price": 4.8,
+          "qty": 2,
+          "category": "Punch / Party Drink",
+          "brewer": ""
+        }
+      ],
+      "email": "Gunnarbersi@gmail.com",
+      "date": "2025-06-19",
+      "time": "17:00",
+      "people": 6,
+      "id": "3"
+    },
+    {
+      "dish": {
+        "id": "53055",
+        "name": "Cevapi Sausages",
+        "category": "Beef",
+        "imageSource": "https://www.themealdb.com/images/media/meals/vc08jn1628769553.jpg",
+        "price": 19.26
+      },
+      "drinks": [
+        {
+          "id": "13899",
+          "name": "3 Wise Men",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/wxqpyw1468877677.jpg",
+          "price": 9.14,
+          "qty": 2,
+          "category": "All",
+          "brewer": ""
+        },
+        {
+          "id": "11010",
+          "name": "After Dinner Cocktail",
+          "description": "",
+          "imageSource": "https://www.thecocktaildb.com/images/media/drink/vtytxq1483387578.jpg",
+          "price": 2.09,
+          "qty": 2,
+          "category": "All",
+          "brewer": ""
+        }
+      ],
+      "email": "Gunnarbersi@gmail.com",
+      "date": "2025-06-18",
+      "time": "18:23",
+      "people": 1,
+      "id": "4"
+    }
+  ],
+  "nextId": 5
+}

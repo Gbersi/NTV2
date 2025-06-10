@@ -1,7 +1,14 @@
-// src/app/layout.tsx
+import '../styles/globals.css';
+import { CssVarsProvider } from '@mui/joy/styles';
+import { OrderProvider } from '../context/OrderContext';
+import TopMenu from '../components/TopMenu';
+import { Toaster } from 'react-hot-toast';
+import Background from '../components/Background';
 
-import React from 'react';
-import ClientSideWrapper from '../components/ClientSideWrapper';
+export const metadata = {
+  title: 'Lil Bits',
+  description: 'Fine dining restaurant reservation',
+};
 
 export default function RootLayout({
   children,
@@ -11,10 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Everything inside ClientSideWrapper is client-only */}
-        <ClientSideWrapper>
-          {children}
-        </ClientSideWrapper>
+        <CssVarsProvider defaultMode="system">
+          <OrderProvider>
+            <Background />
+            <Toaster position="top-center" />
+            <TopMenu />
+            <main style={{ position: 'relative', zIndex: 2 }}>{children}</main>
+          </OrderProvider>
+        </CssVarsProvider>
       </body>
     </html>
   );

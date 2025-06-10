@@ -28,7 +28,11 @@ const theme = extendTheme({
   },
 });
 
-export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+export default function ClientWrapper({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   // Only mount Joy/MUI providers on the client to avoid SSR/client mismatch
   const [mounted, setMounted] = useState(false);
   useEffect(() => {

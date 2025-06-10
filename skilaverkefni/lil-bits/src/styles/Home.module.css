@@ -1,7 +1,7 @@
 :root {
-  --color-primary: #3E6053;
-  --color-secondary: #C16757;
-  --color-accent: #BA2329;
+  --color-primary: #3e6053;
+  --color-secondary: #c16757;
+  --color-accent: #ba2329;
   --bg-light: #fff;
   --border: #ddd;
 
@@ -9,7 +9,9 @@
   --font-body: 'Inter', sans-serif;
 }
 
-html, body, #__next {
+html,
+body,
+#__next {
   height: 100%;
   margin: 0;
   font-family: var(--font-body);
@@ -27,7 +29,7 @@ html, body, #__next {
 .carouselBox {
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .orderBox {
@@ -36,7 +38,7 @@ html, body, #__next {
   border-radius: 12px;
   padding: 2rem;
   text-align: center;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .orderBox h2 {
@@ -60,11 +62,13 @@ html, body, #__next {
   font-size: 1rem;
   border: 1px solid var(--border);
   border-radius: 8px;
-  transition: border-color .2s, box-shadow .2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 .newOrderForm input:focus {
   border-color: var(--color-secondary);
-  box-shadow: 0 0 0 2px rgba(193,103,87,0.3);
+  box-shadow: 0 0 0 2px rgba(193, 103, 87, 0.3);
 }
 
 .newOrderForm button {
@@ -76,7 +80,9 @@ html, body, #__next {
   border: none;
   border-radius: 8px;
   font-size: 1rem;
-  transition: background .2s, transform .1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
 }
 .newOrderForm button:hover {
   background: var(--color-accent);

@@ -1,88 +1,277 @@
-/* src/components/TopMenu.module.css */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&family=Inter:wght@600&display=swap');
 
 .nav {
+  width: 100%;
+  overflow-x: auto;
+  box-sizing: border-box;
+  max-width: 100vw;
+  min-height: 76px;
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 2rem;
-  background: rgba(62, 96, 83, 0.75);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0 3vw;
+  background:
+    linear-gradient(
+      95deg,
+      rgba(36, 57, 47, 0.92) 73%,
+      rgba(186, 35, 41, 0.09) 130%
+    ),
+    rgba(62, 96, 83, 0.94);
+  box-shadow:
+    0 4px 30px #232e2b19,
+    0 2px 0 #c8b27322;
+  overflow: visible;
+  border-bottom: 1.5px solid #c8b27344;
+  animation: navFadeIn 0.75s cubic-bezier(0.6, 0.2, 0.38, 1.04) 1;
 }
 
-.logo {
+.nav::after {
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 2vw;
+  right: 2vw;
+  height: 2px;
+  background: linear-gradient(90deg, #c8b273, #fffbe9 60%, #c8b273 100%);
+  opacity: 0.18;
+  border-radius: 8px;
+  z-index: 9;
+}
+
+@keyframes navFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.menuBackdrop {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100%;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      92deg,
+      rgba(62, 96, 83, 0.9) 70%,
+      rgba(186, 35, 41, 0.11) 130%
+    ),
+    rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(12px) brightness(0.94);
+  border-bottom: 1.5px solid #c8b27344;
+  box-shadow:
+    0 4px 38px 0 #2a483a26,
+    0 1.5px 0 #c8b27344 inset;
+  border-radius: 0 0 1.4rem 1.4rem;
+  transition: background 0.33s cubic-bezier(0.7, 0.2, 0.3, 1);
+  filter: drop-shadow(0 2px 22px #c8b27322);
+}
+
+.logoWrap {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.7em;
+  flex-shrink: 0;
+  z-index: 2;
 }
 
 .logoImg {
-  height: 2.5rem;
-  width: auto;
+  height: 42px;
+  width: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 1px 10px #21392f15);
+  transition: filter 0.22s;
+}
+.logoImg:hover {
+  filter: drop-shadow(0 0 18px #c8b27388) brightness(1.12);
 }
 
 .wordmark {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 1.5rem;
-  color: #fff;
-  letter-spacing: 1px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.3rem;
+  color: #fffbe9;
+  letter-spacing: 2.5px;
+  font-weight: 700;
+  text-shadow:
+    0 1px 18px #c8b27333,
+    0 3px 32px #ba23292a;
+  margin-left: 0.08em;
+  background: linear-gradient(90deg, #fffbe9 60%, #c8b273 105%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: brightness(1.07) drop-shadow(0 1px 12px #c8b27333);
+  animation: wordmarkFadeIn 1s cubic-bezier(0.56, 0.23, 0.46, 1.1) 1;
+}
+
+@keyframes wordmarkFadeIn {
+  from {
+    opacity: 0;
+    letter-spacing: 0.2em;
+  }
+  to {
+    opacity: 1;
+    letter-spacing: 2.5px;
+  }
 }
 
 .menu {
   display: flex;
-  gap: 2rem;
+  gap: 1.4vw;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 2;
+  flex-wrap: wrap;
+}
+
+.menuItem {
+  position: relative;
 }
 
 .menuLink {
-  position: relative;
   font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 1rem;
-  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f8f5f2;
   text-decoration: none;
-  padding: 0.25rem 0;
-  transition: color 0.3s ease;
+  padding: 0.45em 0.8em 0.32em 0.8em;
+  transition:
+    color 0.23s cubic-bezier(0.3, 0.7, 0.4, 1),
+    background 0.22s,
+    box-shadow 0.22s;
+  border-radius: 1em;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  overflow: visible;
+  background: none;
+  outline: none;
+}
+.menuLink:hover,
+.menuLink:focus {
+  color: #ffeac1;
+  background: rgba(200, 178, 115, 0.13);
+  box-shadow:
+    0 2px 15px #c8b27323,
+    0 1px 5px #fff5e799 inset;
+}
+.menuLink.active,
+.menuLink[aria-current='page'] {
+  color: #ffd985;
+  font-weight: 700;
+  background: none;
+  box-shadow: none;
+  outline: 2px solid #c8b27333;
+  outline-offset: 1.5px;
+}
+.menuLink.active:focus,
+.menuLink[aria-current='page']:focus {
+  outline: 2.5px solid #ffeac1cc;
+  outline-offset: 2px;
 }
 
-.menuLink::after {
+.linkLabel {
+  position: relative;
+  z-index: 2;
+  padding-right: 2px;
+}
+
+/* Animated underline */
+.underline {
+  display: block;
+  height: 3.2px;
+  border-radius: 2px;
+  background: linear-gradient(93deg, #c8b273 58%, #ba2329 140%);
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  z-index: 0;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.34s cubic-bezier(0.7, 0.3, 0.23, 1);
+  box-shadow: 0 1.5px 6px #c8b27346;
+  opacity: 0.65;
+}
+
+.menuLink.active .underline,
+.menuLink[aria-current='page'] .underline {
+  transform: scaleX(1);
+}
+
+.linkShimmer {
+  pointer-events: none;
   content: '';
   position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: #C16757;
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.3s ease;
+  left: -6px;
+  top: -10px;
+  width: 110%;
+  height: 200%;
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0) 70%,
+    rgba(255, 246, 220, 0.45) 80%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  opacity: 0;
+  z-index: 3;
+  border-radius: 1em;
+  transition: opacity 0.26s;
+}
+.menuLink:hover .linkShimmer,
+.menuLink:focus .linkShimmer {
+  opacity: 1;
+  animation: shimmerSweep 0.75s cubic-bezier(0.25, 0.74, 0.39, 1.02) 1;
+}
+@keyframes shimmerSweep {
+  0% {
+    opacity: 0.1;
+    left: -30px;
+  }
+  20% {
+    opacity: 0.4;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    left: 10px;
+  }
 }
 
-.menuLink:hover {
-  color: #C16757;
+@media (min-width: 800px) {
+  .menuLink {
+    font-size: 1.18rem;
+    padding: 0.54em 1.25em 0.32em 1.25em;
+  }
 }
-
-.menuLink:hover::after {
-  transform: scaleX(1);
-}
-
-.active {
-  color: #C16757;
-}
-
-.active::after {
-  transform: scaleX(1);
-}
-
-@media (max-width: 800px) {
+@media (max-width: 700px) {
   .nav {
     flex-direction: column;
-    padding: 0.75rem 1rem;
+    padding: 0 1vw;
+    min-height: unset;
+    gap: 6px;
   }
   .menu {
-    gap: 1rem;
-    margin-top: 0.5rem;
+    gap: 1.1em;
+  }
+  .wordmark {
+    font-size: 1.4rem;
+  }
+  .menuBackdrop {
+    border-radius: 0 0 1rem 1rem;
   }
 }

@@ -1,7 +1,7 @@
 :root {
-  --color-primary: #3E6053;
-  --color-secondary: #C16757;
-  --color-accent: #BA2329;
+  --color-primary: #3e6053;
+  --color-secondary: #c16757;
+  --color-accent: #ba2329;
   --font-heading: 'Playfair Display', serif;
   --font-body: 'Inter', sans-serif;
   --border-radius: 12px;
@@ -21,14 +21,15 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  transition: transform .3s ease, box-shadow .3s ease;
-  /* let height grow to fit content */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
 }
 
 .image {
@@ -89,7 +90,9 @@
   place-items: center;
   font-size: 1.1rem;
   cursor: pointer;
-  transition: background .2s ease, transform .1s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
 }
 .btn:hover {
   background: var(--color-accent);
@@ -119,4 +122,14 @@
 }
 .plusBtn:hover {
   background: #355041;
+}
+.glassEffect {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    0 8px 32px rgba(50, 60, 40, 0.08),
+    0 1.5px 8px rgba(50, 96, 83, 0.08);
+  border-radius: 1.5rem;
+  box-sizing: border-box;
+  overflow-x: auto;
 }
